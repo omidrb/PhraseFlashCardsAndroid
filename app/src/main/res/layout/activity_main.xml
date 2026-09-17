@@ -5,19 +5,23 @@
  android:paddingBottom="28dp" android:fitsSystemWindows="true"
  android:layout_width="match_parent" android:layout_height="match_parent">
 
- <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="42dp">
+ <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="46dp">
   <TextView android:text="Phrase Flash Cards" android:textColor="#0F172A" android:textSize="20sp" android:textStyle="bold"
    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
   <Button android:id="@+id/addDeck" android:text="+ Language" android:textSize="11sp" android:textAllCaps="false"
-   android:backgroundTint="#E8F1FF" android:textColor="#2563EB" android:minHeight="36dp"
-   android:layout_width="wrap_content" android:layout_height="36dp"/>
+   android:backgroundTint="#E8F1FF" android:textColor="#2563EB"
+   android:layout_width="wrap_content" android:layout_height="38dp"/>
  </LinearLayout>
 
- <HorizontalScrollView android:scrollbars="none" android:fillViewport="false"
-  android:layout_width="match_parent" android:layout_height="46dp">
-  <LinearLayout android:id="@+id/deckButtons" android:orientation="horizontal"
-   android:layout_width="wrap_content" android:layout_height="match_parent"/>
- </HorizontalScrollView>
+ <LinearLayout android:orientation="horizontal" android:gravity="center_vertical"
+  android:layout_width="match_parent" android:layout_height="52dp">
+  <Spinner android:id="@+id/languageSpinner" android:spinnerMode="dropdown"
+   android:backgroundTint="#2563EB" android:layout_weight="1"
+   android:layout_width="0dp" android:layout_height="48dp"/>
+  <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textStyle="bold"
+   android:backgroundTint="#2563EB" android:textColor="#FFFFFF" android:layout_marginStart="8dp"
+   android:layout_width="140dp" android:layout_height="48dp"/>
+ </LinearLayout>
 
  <TextView android:id="@+id/cardNumber" android:textColor="#64748B" android:textSize="12sp" android:gravity="center"
   android:layout_width="match_parent" android:layout_height="18dp"/>
@@ -83,6 +87,5 @@
    android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
  </LinearLayout>
 
- <!-- Deliberate safe-area spacer: keeps controls above Samsung gesture/navigation area -->
  <Space android:layout_width="match_parent" android:layout_height="22dp"/>
 </LinearLayout>
