@@ -1,6 +1,18 @@
-# Phrase Flash Cards v2.2
+# Phrase Flash Cards v3
+UI redesign for Galaxy S22 Ultra and similar phones.
 
-Fixes the Android/Java `constant string too long` compiler error by moving the 1,000-card seed database out of Java bytecode and into `app/src/main/assets/seed_cards.json`.
+Features:
+- Compact screen-fitting layout
+- Larger meanings/examples and larger Good/Hard controls
+- Green Good / red Hard progress bar
+- Current card number and Leitner box
+- Swipe left/right to skip without rating
+- Active language highlighted blue; inactive decks gray
+- Add unlimited language/deck tabs
+- Separate management per language
+- Delete cards and reset individual Leitner progress
+- Custom cards/decks persist locally
+- Flash-card launcher icon
+- Leitner 5-box scheduling retained
 
-Replace the repository files with this version and run the GitHub Actions build again.
-Artifact: `PhraseCards-v2.2-APK`.
+Build artifact: PhraseCards-v3-APK
