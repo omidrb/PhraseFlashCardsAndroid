@@ -1,18 +1,17 @@
-# Phrase Flash Cards v3
-UI redesign for Galaxy S22 Ultra and similar phones.
+# Phrase Flash Cards v4
 
-Features:
-- Compact screen-fitting layout
-- Larger meanings/examples and larger Good/Hard controls
-- Green Good / red Hard progress bar
-- Current card number and Leitner box
-- Swipe left/right to skip without rating
-- Active language highlighted blue; inactive decks gray
-- Add unlimited language/deck tabs
-- Separate management per language
-- Delete cards and reset individual Leitner progress
-- Custom cards/decks persist locally
-- Flash-card launcher icon
-- Leitner 5-box scheduling retained
+UI rebuilt to closely match the approved visual mockup:
+- compact top header and horizontally scrollable language tabs
+- active language blue, inactive languages gray
+- Good/Hard/Unreviewed progress strip
+- card number + Leitner box
+- white study card with larger meaning/example typography
+- large red Hard and green Good controls
+- swipe left/right to browse without rating
+- add unlimited language decks
+- separate card management per active language
+- delete/reset cards
+- extra bottom safe-area spacing for Galaxy S22 Ultra / Samsung gesture-navigation area
+- launcher icon retained
 
-Build artifact: PhraseCards-v3-APK
+Build artifact: PhraseCards-v4-APK

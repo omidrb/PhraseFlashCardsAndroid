@@ -72,11 +72,12 @@ public class MainActivity extends AppCompatActivity {
  void renderDeckButtons(){
   deckButtons.removeAllViews();
   for(String d:decks){
-   Button b=new Button(this);b.setText(d);b.setAllCaps(false);b.setTextSize(14);
+   Button b=new Button(this);b.setText(d);b.setAllCaps(false);b.setTextSize(13);
    b.setTextColor(Color.parseColor(d.equals(lang)?"#FFFFFF":"#374151"));
    b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor(d.equals(lang)?"#2563EB":"#E5E7EB")));
    b.setOnClickListener(v->{lang=d;currentPos=0;renderDeckButtons();next();});
-   deckButtons.addView(b,new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,52));
+   LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,44);
+   bp.setMargins(2,1,2,1); deckButtons.addView(b,bp);
   }
  }
  int box(Card c){return sp.getInt(c.id+"_box",1);}
