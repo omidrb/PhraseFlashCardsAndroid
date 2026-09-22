@@ -26,3 +26,9 @@ GitHub artifact: ZopeFlashCards-v8.1-APK
 - Add/Edit Card fields have labels, larger touch areas, and vertical spacing.
 - Main Library and Daily Practice use 10dp left/right page padding.
 - Daily Practice has extra bottom breathing room so Show Answer / rating controls sit higher.
+
+## v8.4
+- Removed the "Card Details" heading from the card detail dialog.
+- Card action buttons now use rounded blue/green/red screenshot-style buttons.
+- Added the Zope app icon immediately before the app title on the main screen.
+- Increased the card-detail phrase to 34sp bold and added more separation below it.

@@ -7,8 +7,10 @@
   android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="14dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
-  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">
-   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.3" android:textSize="19sp" android:textStyle="bold"
+  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="48dp">
+   <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
+    android:layout_marginEnd="7dp" android:layout_width="36dp" android:layout_height="36dp"/>
+   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.4" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
    <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
     android:layout_width="88dp" android:layout_height="38dp"/>

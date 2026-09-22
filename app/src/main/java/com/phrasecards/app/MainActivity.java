@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity{
   ScrollView scroll=new ScrollView(this);
   LinearLayout wrap=new LinearLayout(this);wrap.setOrientation(LinearLayout.VERTICAL);wrap.setPadding(dp(10),dp(10),dp(10),dp(8));scroll.addView(wrap);
 
-  TextView phraseTitle=new TextView(this);phraseTitle.setText(c.p);phraseTitle.setTextSize(28);phraseTitle.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);phraseTitle.setGravity(Gravity.CENTER);phraseTitle.setTextColor(dark?Color.WHITE:Color.rgb(17,24,39));
-  LinearLayout.LayoutParams phraseParams=new LinearLayout.LayoutParams(-1,-2);phraseParams.setMargins(0,dp(8),0,dp(24));wrap.addView(phraseTitle,phraseParams);
+  TextView phraseTitle=new TextView(this);phraseTitle.setText(c.p);phraseTitle.setTextSize(34);phraseTitle.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);phraseTitle.setGravity(Gravity.CENTER);phraseTitle.setTextColor(dark?Color.WHITE:Color.rgb(17,24,39));
+  LinearLayout.LayoutParams phraseParams=new LinearLayout.LayoutParams(-1,-2);phraseParams.setMargins(0,dp(12),0,dp(30));wrap.addView(phraseTitle,phraseParams);
 
   addDetailSection(wrap,"English Meaning",blank(c.en),false);
   addDetailSection(wrap,"معنی فارسی",blank(c.fa),true);
@@ -72,18 +72,22 @@ public class MainActivity extends AppCompatActivity{
   LinearLayout.LayoutParams boxP=new LinearLayout.LayoutParams(-1,-2);boxP.setMargins(0,dp(12),0,dp(12));wrap.addView(boxLabel,boxP);
 
   LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setGravity(Gravity.CENTER);
-  Button edit=new Button(this);edit.setText("Edit");edit.setTextColor(Color.WHITE);edit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(37,99,235)));
-  Button move=new Button(this);move.setText("Move Box");move.setTextColor(Color.WHITE);move.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(34,197,94)));
-  Button del=new Button(this);del.setText("Delete");del.setTextColor(Color.WHITE);del.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(239,68,68)));
+  Button edit=actionButton("Edit",Color.rgb(37,99,235));
+  Button move=actionButton("Move Box",Color.rgb(34,197,94));
+  Button del=actionButton("Delete",Color.rgb(239,68,68));
   LinearLayout.LayoutParams bp1=new LinearLayout.LayoutParams(0,dp(50),1f);bp1.setMargins(0,0,dp(4),0);
   LinearLayout.LayoutParams bp2=new LinearLayout.LayoutParams(0,dp(50),1f);bp2.setMargins(dp(2),0,dp(2),0);
   LinearLayout.LayoutParams bp3=new LinearLayout.LayoutParams(0,dp(50),1f);bp3.setMargins(dp(4),0,0,0);
   actions.addView(edit,bp1);actions.addView(move,bp2);actions.addView(del,bp3);wrap.addView(actions);
 
-  AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Card Details").setView(scroll).setNegativeButton("Close",null).create();
+  AlertDialog dlg=new AlertDialog.Builder(this).setView(scroll).setNegativeButton("Close",null).create();
   edit.setOnClickListener(v->{dlg.dismiss();editDialog(c);});move.setOnClickListener(v->{dlg.dismiss();chooseBox(c);});del.setOnClickListener(v->{dlg.dismiss();deleteOne(c);});
-  dlg.setOnShowListener(x->{Button close=dlg.getButton(AlertDialog.BUTTON_NEGATIVE);close.setTextColor(Color.WHITE);close.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(31,41,55)));});
+  dlg.setOnShowListener(x->{Button close=dlg.getButton(AlertDialog.BUTTON_NEGATIVE);close.setTextColor(Color.WHITE);GradientDrawable cbg=new GradientDrawable();cbg.setColor(Color.rgb(31,41,55));cbg.setCornerRadius(dp(12));close.setBackground(cbg);});
   dlg.show();
+ }
+ Button actionButton(String text,int color){
+  Button b=new Button(this);b.setText(text);b.setTextColor(Color.WHITE);b.setTextSize(13);b.setTextAllCaps(false);b.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);
+  GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(dp(14));b.setBackground(g);b.setPadding(dp(6),0,dp(6),0);return b;
  }
  void addDetailSection(LinearLayout parent,String titleText,String value,boolean rtl){
   TextView t=new TextView(this);t.setText(titleText);t.setTextSize(14);t.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);t.setTextColor(dark?Color.rgb(147,197,253):Color.rgb(30,64,175));
