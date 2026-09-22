@@ -8,7 +8,7 @@
  android:layout_width="match_parent" android:layout_height="match_parent">
 
  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="42dp">
-  <TextView android:id="@+id/title" android:text="Phrase Flash Cards v7.0" android:textSize="19sp" android:textStyle="bold"
+  <TextView android:id="@+id/title" android:text="Phrase Flash Cards v7.1" android:textSize="19sp" android:textStyle="bold"
    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
   <Button android:id="@+id/menuButton" android:text="☰  Menu" android:textAllCaps="false" android:textSize="13sp"
    android:backgroundTint="#E5E7EB" android:textColor="#111827"
