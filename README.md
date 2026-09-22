@@ -32,3 +32,7 @@ GitHub artifact: ZopeFlashCards-v8.1-APK
 - Card action buttons now use rounded blue/green/red screenshot-style buttons.
 - Added the Zope app icon immediately before the app title on the main screen.
 - Increased the card-detail phrase to 34sp bold and added more separation below it.
+
+## v8.4.1
+- Fixed Java compilation error in the custom rounded action-button helper.
+- Replaced invalid Button.setTextAllCaps(false) with Button.setAllCaps(false).

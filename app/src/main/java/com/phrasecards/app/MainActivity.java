@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity{
   dlg.show();
  }
  Button actionButton(String text,int color){
-  Button b=new Button(this);b.setText(text);b.setTextColor(Color.WHITE);b.setTextSize(13);b.setTextAllCaps(false);b.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);
+  Button b=new Button(this);b.setText(text);b.setTextColor(Color.WHITE);b.setTextSize(13);b.setAllCaps(false);b.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);
   GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(dp(14));b.setBackground(g);b.setPadding(dp(6),0,dp(6),0);return b;
  }
  void addDetailSection(LinearLayout parent,String titleText,String value,boolean rtl){
