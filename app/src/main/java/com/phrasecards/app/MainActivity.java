@@ -57,20 +57,55 @@ public class MainActivity extends AppCompatActivity{
  int dp(int n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
  void cardActions(Card c,int number){showCardDialog(c);}
  void showCardDialog(Card c){
-  LinearLayout wrap=new LinearLayout(this);wrap.setOrientation(LinearLayout.VERTICAL);wrap.setPadding(dp(20),dp(8),dp(20),dp(8));
-  TextView detail=new TextView(this);detail.setTextSize(16);detail.setTextColor(dark?Color.WHITE:Color.rgb(25,25,25));detail.setText("English meaning\n"+blank(c.en)+"\n\nمعنی فارسی\n"+blank(c.fa)+"\n\nUsage\n"+blank(c.n)+"\n\nExample\n"+blank(c.e)+"\n\nLeitner Box "+box(c));wrap.addView(detail,new LinearLayout.LayoutParams(-1,-2));
-  LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setPadding(0,dp(14),0,0);
+  ScrollView scroll=new ScrollView(this);
+  LinearLayout wrap=new LinearLayout(this);wrap.setOrientation(LinearLayout.VERTICAL);wrap.setPadding(dp(10),dp(10),dp(10),dp(8));scroll.addView(wrap);
+
+  TextView phraseTitle=new TextView(this);phraseTitle.setText(c.p);phraseTitle.setTextSize(28);phraseTitle.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);phraseTitle.setGravity(Gravity.CENTER);phraseTitle.setTextColor(dark?Color.WHITE:Color.rgb(17,24,39));
+  LinearLayout.LayoutParams phraseParams=new LinearLayout.LayoutParams(-1,-2);phraseParams.setMargins(0,dp(8),0,dp(24));wrap.addView(phraseTitle,phraseParams);
+
+  addDetailSection(wrap,"English Meaning",blank(c.en),false);
+  addDetailSection(wrap,"معنی فارسی",blank(c.fa),true);
+  addDetailSection(wrap,"Usage",blank(c.n),false);
+  addDetailSection(wrap,"Example",blank(c.e),false);
+
+  TextView boxLabel=new TextView(this);boxLabel.setText("Leitner Box "+box(c));boxLabel.setTextSize(14);boxLabel.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);boxLabel.setTextColor(dark?Color.rgb(147,197,253):Color.rgb(30,64,175));
+  LinearLayout.LayoutParams boxP=new LinearLayout.LayoutParams(-1,-2);boxP.setMargins(0,dp(12),0,dp(12));wrap.addView(boxLabel,boxP);
+
+  LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setGravity(Gravity.CENTER);
   Button edit=new Button(this);edit.setText("Edit");edit.setTextColor(Color.WHITE);edit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(37,99,235)));
-  Button move=new Button(this);move.setText("Move Box");move.setTextColor(Color.WHITE);move.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(79,70,229)));
+  Button move=new Button(this);move.setText("Move Box");move.setTextColor(Color.WHITE);move.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(34,197,94)));
   Button del=new Button(this);del.setText("Delete");del.setTextColor(Color.WHITE);del.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(239,68,68)));
-  LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(0,dp(48),1f);bp.setMargins(dp(2),0,dp(2),0);actions.addView(edit,bp);actions.addView(move,new LinearLayout.LayoutParams(0,dp(48),1f));actions.addView(del,bp);wrap.addView(actions);
-  AlertDialog dlg=new AlertDialog.Builder(this).setTitle(c.p).setView(wrap).setNegativeButton("Close",null).create();
+  LinearLayout.LayoutParams bp1=new LinearLayout.LayoutParams(0,dp(50),1f);bp1.setMargins(0,0,dp(4),0);
+  LinearLayout.LayoutParams bp2=new LinearLayout.LayoutParams(0,dp(50),1f);bp2.setMargins(dp(2),0,dp(2),0);
+  LinearLayout.LayoutParams bp3=new LinearLayout.LayoutParams(0,dp(50),1f);bp3.setMargins(dp(4),0,0,0);
+  actions.addView(edit,bp1);actions.addView(move,bp2);actions.addView(del,bp3);wrap.addView(actions);
+
+  AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Card Details").setView(scroll).setNegativeButton("Close",null).create();
   edit.setOnClickListener(v->{dlg.dismiss();editDialog(c);});move.setOnClickListener(v->{dlg.dismiss();chooseBox(c);});del.setOnClickListener(v->{dlg.dismiss();deleteOne(c);});
-  dlg.setOnShowListener(x->{dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE);dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(31,41,55)));});dlg.show();
+  dlg.setOnShowListener(x->{Button close=dlg.getButton(AlertDialog.BUTTON_NEGATIVE);close.setTextColor(Color.WHITE);close.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(31,41,55)));});
+  dlg.show();
+ }
+ void addDetailSection(LinearLayout parent,String titleText,String value,boolean rtl){
+  TextView t=new TextView(this);t.setText(titleText);t.setTextSize(14);t.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);t.setTextColor(dark?Color.rgb(147,197,253):Color.rgb(30,64,175));
+  LinearLayout.LayoutParams tp=new LinearLayout.LayoutParams(-1,-2);tp.setMargins(0,dp(5),0,dp(3));parent.addView(t,tp);
+  TextView v=new TextView(this);v.setText(value);v.setTextSize(rtl?18:17);v.setTextColor(dark?Color.WHITE:Color.rgb(31,41,55));if(rtl){v.setGravity(Gravity.RIGHT);v.setTextDirection(View.TEXT_DIRECTION_RTL);}
+  LinearLayout.LayoutParams vp=new LinearLayout.LayoutParams(-1,-2);vp.setMargins(0,0,0,dp(10));parent.addView(v,vp);
  }
  String blank(String s){return s==null||s.trim().isEmpty()?"—":s;}
- LinearLayout form(Card c){LinearLayout l=new LinearLayout(this);l.setPadding(dp(24),0,dp(24),0);l.setOrientation(LinearLayout.VERTICAL);String[]h={"Phrase","English meaning","معنی فارسی","Usage","Example"};String[]v=c==null?new String[]{"","","","",""}:new String[]{c.p,c.en,c.fa,c.n,c.e};for(int i=0;i<h.length;i++){EditText x=new EditText(this);x.setHint(h[i]);x.setText(v[i]);l.addView(x);}return l;}
- void editDialog(Card c){LinearLayout l=form(c);new AlertDialog.Builder(this).setTitle(c==null?"Add card to "+lang:"Edit card").setView(l).setNegativeButton("Cancel",null).setPositiveButton("Save",(d,w)->{String p=((EditText)l.getChildAt(0)).getText().toString().trim();if(p.isEmpty())return;String en=((EditText)l.getChildAt(1)).getText().toString(),fa=((EditText)l.getChildAt(2)).getText().toString(),n=((EditText)l.getChildAt(3)).getText().toString(),e=((EditText)l.getChildAt(4)).getText().toString();if(c==null)cards.add(new Card("c"+System.currentTimeMillis(),lang,p,en,fa,n,e));else{c.p=p;c.en=en;c.fa=fa;c.n=n;c.e=e;}saveCustom();renderLibrary();}).show();}
+ LinearLayout form(Card c){
+  LinearLayout l=new LinearLayout(this);l.setPadding(dp(10),dp(6),dp(10),dp(6));l.setOrientation(LinearLayout.VERTICAL);
+  String[]h={"Phrase","English Meaning","معنی فارسی","Usage","Example"};
+  String[]v=c==null?new String[]{"","","","",""}:new String[]{c.p,c.en,c.fa,c.n,c.e};
+  for(int i=0;i<h.length;i++){
+   TextView label=new TextView(this);label.setText(h[i]);label.setTextSize(14);label.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);label.setTextColor(dark?Color.WHITE:Color.rgb(17,24,39));
+   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,i==0?dp(2):dp(12),0,dp(4));l.addView(label,lp);
+   EditText x=new EditText(this);x.setHint("Enter "+h[i].toLowerCase());x.setText(v[i]);x.setTextSize(16);x.setPadding(dp(12),dp(10),dp(12),dp(10));x.setMinHeight(dp(i>=3?68:56));x.setSingleLine(i<3);
+   if(i==2){x.setGravity(Gravity.RIGHT);x.setTextDirection(View.TEXT_DIRECTION_RTL);}
+   l.addView(x,new LinearLayout.LayoutParams(-1,-2));
+  }
+  return l;
+ }
+ void editDialog(Card c){LinearLayout l=form(c);new AlertDialog.Builder(this).setTitle(c==null?"Add card to "+lang:"Edit card").setView(l).setNegativeButton("Cancel",null).setPositiveButton("Save",(d,w)->{String p=((EditText)l.getChildAt(1)).getText().toString().trim();if(p.isEmpty())return;String en=((EditText)l.getChildAt(3)).getText().toString(),fa=((EditText)l.getChildAt(5)).getText().toString(),n=((EditText)l.getChildAt(7)).getText().toString(),e=((EditText)l.getChildAt(9)).getText().toString();if(c==null)cards.add(new Card("c"+System.currentTimeMillis(),lang,p,en,fa,n,e));else{c.p=p;c.en=en;c.fa=fa;c.n=n;c.e=e;}saveCustom();renderLibrary();}).show();}
  void deleteOne(Card c){new AlertDialog.Builder(this).setTitle("Delete card?").setMessage(c.p).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->{cards.remove(c);sp.edit().putBoolean(c.id+"_deleted",true).apply();saveCustom();renderLibrary();}).show();}
  void deleteSelected(){if(selected.isEmpty())return;new AlertDialog.Builder(this).setTitle("Delete "+selected.size()+" cards?").setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->{ArrayList<Card>gone=new ArrayList<>();for(Card c:cards)if(selected.contains(c.id)){gone.add(c);sp.edit().putBoolean(c.id+"_deleted",true).apply();}cards.removeAll(gone);selected.clear();saveCustom();renderLibrary();}).show();}
  void chooseBox(Card c){String[]b={"Box 1","Box 2","Box 3","Box 4","Box 5"};new AlertDialog.Builder(this).setTitle("Move "+c.p).setSingleChoiceItems(b,box(c)-1,(d,w)->{sp.edit().putInt(c.id+"_box",w+1).apply();d.dismiss();renderLibrary();}).show();}

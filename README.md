@@ -17,3 +17,12 @@ GitHub artifact: ZopeFlashCards-v8.1-APK
 - Added Select All / Unselect All to multi-selection mode.
 - Select All applies to cards currently visible in the active language. If a search filter is active, it selects only matching cards.
 - Selected cards can then be deleted together or moved to another Leitner box.
+
+
+## v8.3
+- Installed the approved Zope mascot/book/lightbulb launcher icon in all Android icon densities.
+- Card Details now shows a much larger bold phrase.
+- Detail section titles are bold with clear spacing between the phrase and meanings.
+- Add/Edit Card fields have labels, larger touch areas, and vertical spacing.
+- Main Library and Daily Practice use 10dp left/right page padding.
+- Daily Practice has extra bottom breathing room so Show Answer / rating controls sit higher.
