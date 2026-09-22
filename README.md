@@ -11,3 +11,9 @@ Changes:
 
 Visible title: Zope Flash Cards v8.1
 GitHub artifact: ZopeFlashCards-v8.1-APK
+
+
+## v8.2
+- Added Select All / Unselect All to multi-selection mode.
+- Select All applies to cards currently visible in the active language. If a search filter is active, it selects only matching cards.
+- Selected cards can then be deleted together or moved to another Leitner box.
