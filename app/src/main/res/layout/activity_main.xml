@@ -1,101 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:id="@+id/root"
- android:orientation="vertical"
- android:background="?android:colorBackground"
- android:paddingLeft="12dp" android:paddingRight="12dp" android:paddingTop="4dp" android:paddingBottom="18dp"
- android:fitsSystemWindows="true"
- android:layout_width="match_parent" android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+ android:background="?android:colorBackground">
 
- <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="42dp">
-  <TextView android:id="@+id/title" android:text="Phrase Flash Cards v7.2" android:textSize="19sp" android:textStyle="bold"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
-  <Button android:id="@+id/menuButton" android:text="☰  Menu" android:textAllCaps="false" android:textSize="13sp"
-   android:backgroundTint="#E5E7EB" android:textColor="#111827"
-   android:layout_width="94dp" android:layout_height="38dp"/>
- </LinearLayout>
+ <LinearLayout android:id="@+id/libraryView" android:orientation="vertical"
+  android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="14dp"
+  android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
- <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="40dp">
-  <TextView android:id="@+id/currentLanguage" android:text="English" android:textSize="15sp" android:textStyle="bold"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
-  <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textStyle="bold"
-   android:backgroundTint="#2563EB" android:textColor="#FFFFFF"
-   android:layout_width="145dp" android:layout_height="38dp"/>
- </LinearLayout>
+  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">
+   <TextView android:id="@+id/title" android:text="Phrase Flash Cards v8.0" android:textSize="19sp" android:textStyle="bold"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+   <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
+    android:layout_width="88dp" android:layout_height="38dp"/>
+  </LinearLayout>
 
- <TextView android:id="@+id/cardNumber" android:textSize="11sp" android:gravity="center"
-  android:layout_width="match_parent" android:layout_height="15dp"/>
-
- <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="7dp">
-  <View android:id="@+id/goodProgress" android:background="#22C55E" android:layout_width="0dp" android:layout_height="match_parent"/>
-  <View android:id="@+id/hardProgress" android:background="#EF4444" android:layout_width="0dp" android:layout_height="match_parent"/>
-  <View android:id="@+id/unseenProgress" android:background="#94A3B8" android:layout_width="0dp" android:layout_height="match_parent"/>
- </LinearLayout>
-
- <TextView android:id="@+id/stats" android:textSize="10sp" android:gravity="center"
-  android:layout_width="match_parent" android:layout_height="16dp"/>
-
- <LinearLayout android:id="@+id/studyArea" android:orientation="vertical" android:gravity="center"
-  android:background="?android:colorBackground" android:elevation="2dp"
-  android:paddingLeft="9dp" android:paddingRight="9dp" android:paddingTop="4dp" android:paddingBottom="4dp"
-  android:layout_marginTop="1dp" android:layout_marginBottom="1dp"
-  android:layout_width="match_parent" android:layout_height="260dp">
-
-  <TextView android:id="@+id/phrase" android:gravity="center" android:textStyle="bold" android:textSize="26sp"
-   android:maxLines="3" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-
-  <LinearLayout android:id="@+id/answerBox" android:visibility="gone" android:orientation="vertical"
-   android:layout_marginTop="4dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-
-   <TextView android:text="English meaning" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="38dp">
+   <TextView android:id="@+id/currentLanguage" android:text="English" android:textStyle="bold" android:textSize="16sp"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+   <TextView android:id="@+id/cardCount" android:text="0 cards" android:textSize="12sp"
     android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-   <TextView android:id="@+id/meaningEnglish" android:textSize="18sp" android:textStyle="bold"
-    android:layout_width="match_parent" android:layout_height="wrap_content"/>
+  </LinearLayout>
 
-   <TextView android:text="معنی فارسی" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
-    android:layout_marginTop="3dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-   <TextView android:id="@+id/meaningPersian" android:textSize="19sp" android:textStyle="bold"
-    android:gravity="right" android:textDirection="rtl"
-    android:layout_width="match_parent" android:layout_height="wrap_content"/>
+  <EditText android:id="@+id/search" android:hint="Search cards..." android:singleLine="true"
+   android:paddingLeft="12dp" android:paddingRight="12dp" android:textSize="14sp"
+   android:layout_width="match_parent" android:layout_height="42dp"/>
 
-   <TextView android:text="Usage" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
-    android:layout_marginTop="3dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-   <TextView android:id="@+id/note" android:textSize="14sp" android:maxLines="2"
-    android:layout_width="match_parent" android:layout_height="wrap_content"/>
+  <LinearLayout android:orientation="horizontal" android:layout_marginTop="4dp"
+   android:layout_width="match_parent" android:layout_height="7dp">
+   <View android:id="@+id/goodProgress" android:background="#22C55E" android:layout_width="0dp" android:layout_height="match_parent"/>
+   <View android:id="@+id/hardProgress" android:background="#EF4444" android:layout_width="0dp" android:layout_height="match_parent"/>
+   <View android:id="@+id/unseenProgress" android:background="#94A3B8" android:layout_width="0dp" android:layout_height="match_parent"/>
+  </LinearLayout>
+  <TextView android:id="@+id/stats" android:textSize="10sp" android:gravity="center"
+   android:layout_width="match_parent" android:layout_height="18dp"/>
 
-   <TextView android:text="Example" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
-    android:layout_marginTop="3dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-   <TextView android:id="@+id/example" android:textSize="17sp" android:maxLines="2"
+  <LinearLayout android:id="@+id/selectionBar" android:visibility="gone" android:gravity="center_vertical"
+   android:paddingLeft="6dp" android:paddingRight="6dp" android:layout_width="match_parent" android:layout_height="46dp">
+   <TextView android:id="@+id/selectedCount" android:text="0 selected" android:textStyle="bold"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+   <Button android:id="@+id/moveSelected" android:text="Move Box" android:textAllCaps="false"
+    android:layout_width="95dp" android:layout_height="40dp"/>
+   <Button android:id="@+id/deleteSelected" android:text="Delete" android:textAllCaps="false"
+    android:backgroundTint="#EF4444" android:textColor="#FFFFFF"
+    android:layout_width="82dp" android:layout_height="40dp"/>
+   <Button android:id="@+id/cancelSelection" android:text="✕" android:textAllCaps="false"
+    android:layout_width="48dp" android:layout_height="40dp"/>
+  </LinearLayout>
+
+  <ScrollView android:fillViewport="true" android:layout_weight="1"
+   android:layout_width="match_parent" android:layout_height="0dp">
+   <GridLayout android:id="@+id/cardGrid" android:columnCount="3" android:alignmentMode="alignMargins"
+    android:useDefaultMargins="false" android:paddingTop="4dp" android:paddingBottom="8dp"
     android:layout_width="match_parent" android:layout_height="wrap_content"/>
+  </ScrollView>
+
+  <LinearLayout android:orientation="horizontal" android:layout_marginTop="3dp"
+   android:layout_width="match_parent" android:layout_height="48dp">
+   <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false"
+    android:layout_marginEnd="4dp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
+   <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textStyle="bold"
+    android:backgroundTint="#2563EB" android:textColor="#FFFFFF" android:layout_marginStart="4dp"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
   </LinearLayout>
  </LinearLayout>
 
- <TextView android:text="← Swipe to browse →" android:textSize="9sp" android:gravity="center"
-  android:layout_width="match_parent" android:layout_height="12dp"/>
+ <LinearLayout android:id="@+id/practiceView" android:visibility="gone" android:orientation="vertical"
+  android:paddingLeft="12dp" android:paddingRight="12dp" android:paddingTop="6dp" android:paddingBottom="18dp"
+  android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
- <Button android:id="@+id/show" android:text="Show answer" android:textAllCaps="false" android:textStyle="bold"
-  android:backgroundTint="#D1D5DB" android:textColor="#111827"
-  android:layout_width="match_parent" android:layout_height="41dp"/>
+  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">
+   <Button android:id="@+id/backLibrary" android:text="← Library" android:textAllCaps="false"
+    android:layout_width="105dp" android:layout_height="38dp"/>
+   <TextView android:id="@+id/practiceProgress" android:text="Daily Practice 1 / 10" android:textStyle="bold"
+    android:gravity="right" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+  </LinearLayout>
 
- <LinearLayout android:id="@+id/rating" android:visibility="gone" android:orientation="horizontal"
-  android:layout_width="match_parent" android:layout_height="55dp">
-  <Button android:id="@+id/hard" android:text="Hard" android:textAllCaps="false" android:textSize="18sp" android:textStyle="bold"
-   android:backgroundTint="#EF4444" android:textColor="#FFFFFF" android:layout_marginEnd="4dp"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
-  <Button android:id="@+id/good" android:text="Good" android:textAllCaps="false" android:textSize="18sp" android:textStyle="bold"
-   android:backgroundTint="#22C55E" android:textColor="#FFFFFF" android:layout_marginStart="4dp"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
+  <LinearLayout android:id="@+id/studyArea" android:orientation="vertical" android:gravity="center"
+   android:padding="12dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+   android:layout_weight="1" android:layout_width="match_parent" android:layout_height="0dp">
+   <TextView android:id="@+id/phrase" android:gravity="center" android:textStyle="bold" android:textSize="28sp"
+    android:maxLines="4" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+   <LinearLayout android:id="@+id/answerBox" android:visibility="gone" android:orientation="vertical"
+    android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:text="English meaning" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+     android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/meaningEnglish" android:textSize="19sp" android:textStyle="bold"
+     android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <TextView android:text="معنی فارسی" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+     android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/meaningPersian" android:textSize="20sp" android:textStyle="bold" android:gravity="right"
+     android:textDirection="rtl" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <TextView android:text="Usage" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+     android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/note" android:textSize="15sp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <TextView android:text="Example" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+     android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/example" android:textSize="17sp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+   </LinearLayout>
+  </LinearLayout>
+
+  <Button android:id="@+id/show" android:text="Show Answer" android:textAllCaps="false" android:textStyle="bold"
+   android:layout_width="match_parent" android:layout_height="48dp"/>
+  <LinearLayout android:id="@+id/rating" android:visibility="gone" android:orientation="horizontal"
+   android:layout_width="match_parent" android:layout_height="58dp">
+   <Button android:id="@+id/hard" android:text="Hard" android:textAllCaps="false" android:textSize="18sp" android:textStyle="bold"
+    android:backgroundTint="#EF4444" android:textColor="#FFFFFF" android:layout_marginEnd="5dp"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
+   <Button android:id="@+id/good" android:text="Good" android:textAllCaps="false" android:textSize="18sp" android:textStyle="bold"
+    android:backgroundTint="#22C55E" android:textColor="#FFFFFF" android:layout_marginStart="5dp"
+    android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
+  </LinearLayout>
  </LinearLayout>
-
- <LinearLayout android:orientation="horizontal" android:layout_marginTop="2dp"
-  android:layout_width="match_parent" android:layout_height="39dp">
-  <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false" android:textSize="12sp"
-   android:backgroundTint="#D1D5DB" android:textColor="#111827" android:layout_marginEnd="4dp"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
-  <Button android:id="@+id/manage" android:text="Manage Cards" android:textAllCaps="false" android:textSize="12sp"
-   android:backgroundTint="#D1D5DB" android:textColor="#111827" android:layout_marginStart="4dp"
-   android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
- </LinearLayout>
-
- <Space android:layout_width="match_parent" android:layout_height="6dp"/>
-</LinearLayout>
+</FrameLayout>
