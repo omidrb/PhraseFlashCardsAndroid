@@ -8,7 +8,7 @@
  android:layout_width="match_parent" android:layout_height="match_parent">
 
  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="42dp">
-  <TextView android:id="@+id/title" android:text="Phrase Flash Cards v7.1" android:textSize="19sp" android:textStyle="bold"
+  <TextView android:id="@+id/title" android:text="Phrase Flash Cards v7.2" android:textSize="19sp" android:textStyle="bold"
    android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
   <Button android:id="@+id/menuButton" android:text="☰  Menu" android:textAllCaps="false" android:textSize="13sp"
    android:backgroundTint="#E5E7EB" android:textColor="#111827"
@@ -39,7 +39,7 @@
   android:background="?android:colorBackground" android:elevation="2dp"
   android:paddingLeft="9dp" android:paddingRight="9dp" android:paddingTop="4dp" android:paddingBottom="4dp"
   android:layout_marginTop="1dp" android:layout_marginBottom="1dp"
-  android:layout_weight="1" android:layout_width="match_parent" android:layout_height="0dp">
+  android:layout_width="match_parent" android:layout_height="260dp">
 
   <TextView android:id="@+id/phrase" android:gravity="center" android:textStyle="bold" android:textSize="26sp"
    android:maxLines="3" android:layout_width="match_parent" android:layout_height="wrap_content"/>
@@ -97,5 +97,5 @@
    android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
  </LinearLayout>
 
- <Space android:layout_width="match_parent" android:layout_height="12dp"/>
+ <Space android:layout_width="match_parent" android:layout_height="6dp"/>
 </LinearLayout>
