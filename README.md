@@ -1,38 +1,23 @@
-# Zope Flash Cards v8.1
+# Zope Flash Cards v8.7
 
-Changes:
-- App renamed to Zope Flash Cards.
-- Clean starter database: one English test card only. A new preferences namespace prevents old local cards from being carried into this version.
-- Tapping a tile opens card details with Edit, Move Box, and Delete buttons directly below the details.
-- Multi-selection no longer rebuilds the full grid after every tap, making selection much faster.
-- Material accent colors make dialog actions distinguishable from dialog backgrounds.
-- Daily Practice controls are lifted upward for easier reach.
-- CSV import still supports 2-column Phrase,Meaning and 4-column Phrase,English Meaning,Persian Meaning,Example.
+Android flash-card app for personal language learning.
 
-Visible title: Zope Flash Cards v8.1
-GitHub artifact: ZopeFlashCards-v8.1-APK
+## v8.7 changes
+- Voice setting menu: 0.5x / 0.75x / 1x and up to four installed TTS voices for the active language.
+- Speaker-icon playback in card details and Daily Practice; Daily Practice still auto-plays each new phrase.
+- Usage removed from card display, editor, CSV import/export, and Daily Practice.
+- Leitner box label removed from card tiles/details (Leitner scheduling remains active internally and management remains in Menu).
+- Smarter CSV import maps Phrase, English Meaning, Persian Meaning, and Example from headers/content and ignores Usage columns.
+- High-contrast black Close buttons.
+- Short haptic feedback for button/icon-button taps.
+- Wider left/right safe margins.
+- Main logo doubled and a large startup logo overlay added.
+- Version 8.7 / versionCode 19.
 
+## APK update signing
+This source includes a fixed signing keystore (`app/zope-update.jks`) so builds made from v8.7 onward can update each other without deleting app data, provided the same keystore remains unchanged.
 
-## v8.2
-- Added Select All / Unselect All to multi-selection mode.
-- Select All applies to cards currently visible in the active language. If a search filter is active, it selects only matching cards.
-- Selected cards can then be deleted together or moved to another Leitner box.
+IMPORTANT: an APK can update an already-installed Android app only if both APKs use the same package ID and signing certificate. The old v8.6 GitHub debug APK was signed by the temporary GitHub runner debug key. That private key is not available in this source, so the first move from that particular v8.6 APK to this new fixed-key build may still require uninstalling v8.6. Before doing that, export your cards. After v8.7 is installed, keep this keystore for all future releases so subsequent updates preserve app data.
 
-
-## v8.3
-- Installed the approved Zope mascot/book/lightbulb launcher icon in all Android icon densities.
-- Card Details now shows a much larger bold phrase.
-- Detail section titles are bold with clear spacing between the phrase and meanings.
-- Add/Edit Card fields have labels, larger touch areas, and vertical spacing.
-- Main Library and Daily Practice use 10dp left/right page padding.
-- Daily Practice has extra bottom breathing room so Show Answer / rating controls sit higher.
-
-## v8.4
-- Removed the "Card Details" heading from the card detail dialog.
-- Card action buttons now use rounded blue/green/red screenshot-style buttons.
-- Added the Zope app icon immediately before the app title on the main screen.
-- Increased the card-detail phrase to 34sp bold and added more separation below it.
-
-## v8.4.1
-- Fixed Java compilation error in the custom rounded action-button helper.
-- Replaced invalid Button.setTextAllCaps(false) with Button.setAllCaps(false).
+## Build
+Run the included GitHub Actions workflow (`Build Android APK`). The artifact will be named `ZopeFlashCards-v8.7-APK`.

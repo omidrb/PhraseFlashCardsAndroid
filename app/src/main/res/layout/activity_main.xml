@@ -4,13 +4,13 @@
  android:background="?android:colorBackground">
 
  <LinearLayout android:id="@+id/libraryView" android:orientation="vertical"
-  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="50dp" android:paddingRight="50dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
-  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="48dp">
+  <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="78dp">
    <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
-    android:layout_marginEnd="7dp" android:layout_width="36dp" android:layout_height="36dp"/>
-   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.6" android:textSize="19sp" android:textStyle="bold"
+    android:layout_marginEnd="7dp" android:layout_width="72dp" android:layout_height="72dp"/>
+   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.7" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
    <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
     android:layout_width="88dp" android:layout_height="38dp"/>
@@ -69,7 +69,7 @@
  </LinearLayout>
 
  <LinearLayout android:id="@+id/practiceView" android:visibility="gone" android:orientation="vertical"
-  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="50dp" android:paddingRight="50dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">
@@ -84,9 +84,9 @@
    android:layout_weight="1" android:layout_width="match_parent" android:layout_height="0dp">
    <TextView android:id="@+id/phrase" android:gravity="center" android:textStyle="bold" android:textSize="32sp"
     android:maxLines="4" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-   <Button android:id="@+id/practiceListen" android:text="🔊 Listen" android:textAllCaps="false" android:textStyle="bold" android:textSize="12sp"
-    android:backgroundTint="#86EFAC" android:textColor="#111111" android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
-    android:layout_gravity="center_horizontal" android:layout_width="120dp" android:layout_height="38dp"/>
+   <ImageButton android:id="@+id/practiceListen" android:src="@android:drawable/ic_lock_silent_mode_off" android:contentDescription="Play phrase"
+    android:backgroundTint="#86EFAC" android:tint="#111111" android:padding="10dp" android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
+    android:layout_gravity="center_horizontal" android:layout_width="46dp" android:layout_height="46dp"/>
    <LinearLayout android:id="@+id/answerBox" android:visibility="gone" android:orientation="vertical"
     android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
     <TextView android:text="English meaning" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
@@ -97,9 +97,6 @@
      android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
     <TextView android:id="@+id/meaningPersian" android:textSize="20sp" android:textStyle="bold" android:gravity="right"
      android:textDirection="rtl" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <TextView android:text="Usage" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
-     android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    <TextView android:id="@+id/note" android:textSize="15sp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
     <TextView android:text="Example" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
      android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
     <TextView android:id="@+id/example" android:textSize="17sp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
@@ -120,4 +117,8 @@
   </LinearLayout>
   <Space android:layout_width="match_parent" android:layout_height="28dp"/>
  </LinearLayout>
+
+ <FrameLayout android:id="@+id/splash" android:background="?android:colorBackground" android:clickable="true" android:focusable="true" android:layout_width="match_parent" android:layout_height="match_parent">
+  <ImageView android:src="@drawable/zope_title_icon" android:scaleType="centerInside" android:layout_gravity="center" android:layout_width="144dp" android:layout_height="144dp"/>
+ </FrameLayout>
 </FrameLayout>
