@@ -4,13 +4,13 @@
  android:background="?android:colorBackground">
 
  <LinearLayout android:id="@+id/libraryView" android:orientation="vertical"
-  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="40dp" android:paddingRight="40dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="78dp">
    <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
     android:layout_marginEnd="7dp" android:layout_width="72dp" android:layout_height="72dp"/>
-   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.9" android:textSize="19sp" android:textStyle="bold"
+   <TextView android:id="@+id/title" android:text="Zope Flash Cards v9.0" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
    <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
     android:layout_width="88dp" android:layout_height="38dp"/>
@@ -72,7 +72,7 @@
  </LinearLayout>
 
  <LinearLayout android:id="@+id/practiceView" android:visibility="gone" android:orientation="vertical"
-  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="40dp" android:paddingRight="40dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">

@@ -57,8 +57,10 @@ public class MainActivity extends AppCompatActivity{
  int dp(int n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
  void cardActions(Card c,int number){showCardDialog(c);}
  void showCardDialog(Card c){
-  ScrollView scroll=new ScrollView(this);
-  LinearLayout wrap=new LinearLayout(this);wrap.setOrientation(LinearLayout.VERTICAL);wrap.setPadding(dp(16),dp(16),dp(16),dp(14));GradientDrawable cardFrame=new GradientDrawable();cardFrame.setColor(dark?Color.rgb(30,30,30):Color.WHITE);cardFrame.setStroke(dp(4),Color.rgb(207,159,6));cardFrame.setCornerRadius(dp(18));wrap.setBackground(cardFrame);scroll.setPadding(dp(8),dp(8),dp(8),dp(8));scroll.addView(wrap);
+  final Dialog dlg=new Dialog(this);
+  ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setPadding(0,0,0,0);
+  LinearLayout wrap=new LinearLayout(this);wrap.setOrientation(LinearLayout.VERTICAL);wrap.setPadding(dp(18),dp(18),dp(18),dp(16));
+  GradientDrawable cardFrame=new GradientDrawable();cardFrame.setColor(dark?Color.rgb(30,30,30):Color.WHITE);cardFrame.setStroke(dp(4),Color.rgb(207,159,6));cardFrame.setCornerRadius(dp(18));wrap.setBackground(cardFrame);scroll.addView(wrap,new ScrollView.LayoutParams(-1,-1));
 
   TextView phraseTitle=new TextView(this);phraseTitle.setText(c.p);phraseTitle.setTextSize(34);phraseTitle.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);phraseTitle.setGravity(Gravity.CENTER);phraseTitle.setTextColor(dark?Color.WHITE:Color.rgb(17,24,39));
   LinearLayout.LayoutParams phraseParams=new LinearLayout.LayoutParams(-1,-2);phraseParams.setMargins(0,dp(12),0,dp(30));wrap.addView(phraseTitle,phraseParams);
@@ -68,20 +70,15 @@ public class MainActivity extends AppCompatActivity{
   addDetailSection(wrap,"معنی فارسی",blank(c.fa),true);
   addDetailSection(wrap,"Example",blank(c.e),false);
 
-
   LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setGravity(Gravity.CENTER);
-  Button edit=actionButton("Edit",Color.rgb(37,99,235));
-  Button move=actionButton("Move Box",Color.rgb(34,197,94));
-  Button del=actionButton("Delete",Color.rgb(239,68,68));
-  LinearLayout.LayoutParams bp1=new LinearLayout.LayoutParams(0,dp(50),1f);bp1.setMargins(0,0,dp(4),0);
-  LinearLayout.LayoutParams bp2=new LinearLayout.LayoutParams(0,dp(50),1f);bp2.setMargins(dp(2),0,dp(2),0);
-  LinearLayout.LayoutParams bp3=new LinearLayout.LayoutParams(0,dp(50),1f);bp3.setMargins(dp(4),0,0,0);
-  actions.addView(edit,bp1);actions.addView(move,bp2);actions.addView(del,bp3);wrap.addView(actions);
+  Button edit=actionButton("Edit",Color.rgb(37,99,235));Button move=actionButton("Move Box",Color.rgb(34,197,94));Button del=actionButton("Delete",Color.rgb(239,68,68));
+  LinearLayout.LayoutParams bp1=new LinearLayout.LayoutParams(0,dp(50),1f);bp1.setMargins(0,0,dp(4),0);LinearLayout.LayoutParams bp2=new LinearLayout.LayoutParams(0,dp(50),1f);bp2.setMargins(dp(2),0,dp(2),0);LinearLayout.LayoutParams bp3=new LinearLayout.LayoutParams(0,dp(50),1f);bp3.setMargins(dp(4),0,0,0);actions.addView(edit,bp1);actions.addView(move,bp2);actions.addView(del,bp3);LinearLayout.LayoutParams ap=new LinearLayout.LayoutParams(-1,-2);ap.setMargins(0,dp(18),0,dp(10));wrap.addView(actions,ap);
 
-  AlertDialog dlg=new AlertDialog.Builder(this).setView(scroll).setNegativeButton("Close",null).create();
-  edit.setOnClickListener(v->{dlg.dismiss();editDialog(c);});move.setOnClickListener(v->{dlg.dismiss();chooseBox(c);});del.setOnClickListener(v->{dlg.dismiss();deleteOne(c);});
-  dlg.setOnShowListener(x->{Button close=dlg.getButton(AlertDialog.BUTTON_NEGATIVE);close.setTextColor(dark?Color.BLACK:Color.WHITE);GradientDrawable cbg=new GradientDrawable();cbg.setColor(dark?Color.WHITE:Color.BLACK);cbg.setCornerRadius(dp(12));close.setBackground(cbg);close.setPadding(dp(18),0,dp(18),0);});
-  dlg.show();
+  Button close=new Button(this);close.setText("Close");close.setAllCaps(false);close.setTextSize(16);close.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);close.setTextColor(dark?Color.BLACK:Color.WHITE);GradientDrawable cbg=new GradientDrawable();cbg.setColor(dark?Color.WHITE:Color.BLACK);cbg.setCornerRadius(dp(12));close.setBackground(cbg);LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,dp(54));cp.setMargins(0,dp(6),0,0);wrap.addView(close,cp);
+
+  dlg.setContentView(scroll);Window win=dlg.getWindow();if(win!=null){win.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));win.setLayout((int)(getResources().getDisplayMetrics().widthPixels-dp(60)),WindowManager.LayoutParams.WRAP_CONTENT);}
+  close.setOnClickListener(v->dlg.dismiss());edit.setOnClickListener(v->{dlg.dismiss();editDialog(c);});move.setOnClickListener(v->{dlg.dismiss();chooseBox(c);});del.setOnClickListener(v->{dlg.dismiss();deleteOne(c);});
+  dlg.setOnShowListener(v->{Window w=dlg.getWindow();if(w!=null){w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));w.setLayout((int)(getResources().getDisplayMetrics().widthPixels-dp(60)),WindowManager.LayoutParams.WRAP_CONTENT);}});dlg.show();
  }
  void initTts(){tts=new TextToSpeech(this,status->{ttsReady=status==TextToSpeech.SUCCESS;});}
  Locale localeForLanguage(String l){String x=l==null?"":l.toLowerCase(Locale.ROOT);if(x.contains("norwegian")||x.contains("norsk"))return new Locale("nb","NO");if(x.contains("german"))return Locale.GERMAN;if(x.contains("french"))return Locale.FRENCH;if(x.contains("spanish"))return new Locale("es","ES");if(x.contains("italian"))return Locale.ITALIAN;if(x.contains("persian")||x.contains("farsi")||x.contains("فارسی"))return new Locale("fa","IR");return Locale.ENGLISH;}
@@ -125,7 +122,7 @@ public class MainActivity extends AppCompatActivity{
   void chooseLanguage(){String[]a=decks.toArray(new String[0]);new AlertDialog.Builder(this).setTitle("Switch language").setSingleChoiceItems(a,decks.indexOf(lang),(d,w)->{lang=decks.get(w);selected.clear();search.setText("");d.dismiss();renderLibrary();}).show();}
  void addLanguage(){EditText i=new EditText(this);i.setHint("e.g. German");new AlertDialog.Builder(this).setTitle("Add new language").setView(i).setNegativeButton("Cancel",null).setPositiveButton("Add",(d,w)->{String n=i.getText().toString().trim();if(!n.isEmpty()&&!decks.contains(n)){decks.add(n);saveDecks();lang=n;renderLibrary();}}).show();}
  void setTheme(String t){String old=sp.getString("theme","system");if(old.equals(t))return;sp.edit().putString("theme",t).apply();applyTheme();}
- void showAbout(){AlertDialog d=new AlertDialog.Builder(this).setTitle("About Zope Flash Cards").setMessage("This is an experimental Android Flash card application for personal use. Created by Omid.R.B . Version 8.9").setPositiveButton("OK",null).create();d.setOnShowListener(v->styleClose(d));d.show();}
+ void showAbout(){AlertDialog d=new AlertDialog.Builder(this).setTitle("About Zope Flash Cards").setMessage("This is an experimental Android Flash card application for personal use. Created by Omid.R.B . Version 9.0").setPositiveButton("OK",null).create();d.setOnShowListener(v->styleClose(d));d.show();}
  void viewByBox(){String[]b=new String[5];for(int k=1;k<=5;k++){int n=0;for(Card c:cards)if(c.lang.equals(lang)&&box(c)==k)n++;b[k-1]="Box "+k+"  ("+n+" cards)";}new AlertDialog.Builder(this).setTitle("Leitner Boxes — "+lang).setItems(b,(d,w)->{query="";search.setText("");renderLibrary();for(int i=0;i<cardGrid.getChildCount();i++){View v=cardGrid.getChildAt(i);v.setVisibility(View.VISIBLE);}Toast.makeText(this,"Box "+(w+1)+": tap cards to edit their box",Toast.LENGTH_LONG).show();}).show();}
  void resetLeitner(){new AlertDialog.Builder(this).setTitle("Reset Leitner progress?").setMessage("This resets all "+lang+" cards to Box 1 and clears Good/Hard status.").setNegativeButton("Cancel",null).setPositiveButton("Reset",(d,w)->{SharedPreferences.Editor ed=sp.edit();for(Card c:cards)if(c.lang.equals(lang)){ed.remove(c.id+"_box");ed.remove(c.id+"_due");ed.remove(c.id+"_result");}ed.apply();renderLibrary();}).show();}
  void startDaily(){dailyCards.clear();dailyGood=0;dailyHard=0;dailyIndex=0;long y=dayKey()-1;ArrayList<Card>h=new ArrayList<>(),o=new ArrayList<>();for(Card c:cards)if(c.lang.equals(lang)){if(sp.getLong(c.id+"_dailyHard",-99)==y)h.add(c);else o.add(c);}Collections.shuffle(o);dailyCards.addAll(h);for(Card c:o)if(dailyCards.size()<10)dailyCards.add(c);while(dailyCards.size()>10)dailyCards.remove(dailyCards.size()-1);if(dailyCards.isEmpty()){Toast.makeText(this,"No cards in "+lang,Toast.LENGTH_SHORT).show();return;}dailyMode=true;libraryView.setVisibility(View.GONE);practiceView.setVisibility(View.VISIBLE);showDaily();}
