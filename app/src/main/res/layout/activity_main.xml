@@ -133,6 +133,7 @@
     <Button android:id="@+id/drawerReset" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Reset Leitner progress" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerMode" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Mode" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerVoice" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Voice setting" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerNotification" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Notification" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerAbout" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="About" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerClose" android:text="Close" android:textAllCaps="false" android:textColor="#FFFFFF" android:backgroundTint="#000000" android:layout_marginTop="20dp" android:layout_width="match_parent" android:layout_height="52dp"/>
    </LinearLayout>
