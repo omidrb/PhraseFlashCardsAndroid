@@ -4,13 +4,13 @@
  android:background="?android:colorBackground">
 
  <LinearLayout android:id="@+id/libraryView" android:orientation="vertical"
-  android:paddingLeft="50dp" android:paddingRight="50dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="78dp">
    <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
     android:layout_marginEnd="7dp" android:layout_width="72dp" android:layout_height="72dp"/>
-   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.7" android:textSize="19sp" android:textStyle="bold"
+   <TextView android:id="@+id/title" android:text="Zope Flash Cards v8.8" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
    <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
     android:layout_width="88dp" android:layout_height="38dp"/>
@@ -33,8 +33,11 @@
    <View android:id="@+id/hardProgress" android:background="#EF4444" android:layout_width="0dp" android:layout_height="match_parent"/>
    <View android:id="@+id/unseenProgress" android:background="#94A3B8" android:layout_width="0dp" android:layout_height="match_parent"/>
   </LinearLayout>
-  <TextView android:id="@+id/stats" android:textSize="10sp" android:gravity="center"
-   android:layout_width="match_parent" android:layout_height="18dp"/>
+  <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="24dp">
+   <TextView android:id="@+id/goodStats" android:text="Good 0" android:textColor="#16A34A" android:textStyle="bold" android:textSize="12sp" android:layout_marginEnd="18dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+   <TextView android:id="@+id/hardStats" android:text="Hard 0" android:textColor="#DC2626" android:textStyle="bold" android:textSize="12sp" android:layout_marginEnd="18dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+   <TextView android:id="@+id/stats" android:text="Unreviewed 0" android:textSize="11sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
 
   <LinearLayout android:id="@+id/selectionBar" android:visibility="gone" android:gravity="center_vertical"
    android:paddingLeft="4dp" android:paddingRight="4dp" android:layout_width="match_parent" android:layout_height="48dp">
@@ -69,7 +72,7 @@
  </LinearLayout>
 
  <LinearLayout android:id="@+id/practiceView" android:visibility="gone" android:orientation="vertical"
-  android:paddingLeft="50dp" android:paddingRight="50dp" android:paddingTop="30dp" android:paddingBottom="30dp"
+  android:paddingLeft="30dp" android:paddingRight="30dp" android:paddingTop="30dp" android:paddingBottom="30dp"
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="44dp">
@@ -117,6 +120,24 @@
   </LinearLayout>
   <Space android:layout_width="match_parent" android:layout_height="28dp"/>
  </LinearLayout>
+
+ <FrameLayout android:id="@+id/drawerOverlay" android:visibility="gone" android:clickable="true" android:background="#66000000" android:layout_width="match_parent" android:layout_height="match_parent">
+  <ScrollView android:id="@+id/drawerPanel" android:background="?android:colorBackground" android:clickable="true" android:layout_gravity="start" android:layout_width="300dp" android:layout_height="match_parent">
+   <LinearLayout android:orientation="vertical" android:paddingLeft="24dp" android:paddingRight="24dp" android:paddingTop="42dp" android:paddingBottom="30dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:text="Zope Flash Cards" android:textStyle="bold" android:textSize="22sp" android:layout_marginBottom="24dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/drawerLanguage" android:text="Switch language" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerAddLanguage" android:text="Add new language" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerImport" android:text="Import CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerExport" android:text="Export active language to CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerBoxes" android:text="View by Leitner Box" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerReset" android:text="Reset Leitner progress" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerMode" android:text="Mode" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerVoice" android:text="Voice setting" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerAbout" android:text="About" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerClose" android:text="Close" android:textAllCaps="false" android:textColor="#FFFFFF" android:backgroundTint="#000000" android:layout_marginTop="20dp" android:layout_width="match_parent" android:layout_height="52dp"/>
+   </LinearLayout>
+  </ScrollView>
+ </FrameLayout>
 
  <FrameLayout android:id="@+id/splash" android:background="?android:colorBackground" android:clickable="true" android:focusable="true" android:layout_width="match_parent" android:layout_height="match_parent">
   <ImageView android:src="@drawable/zope_title_icon" android:scaleType="centerInside" android:layout_gravity="center" android:layout_width="144dp" android:layout_height="144dp"/>
