@@ -10,7 +10,7 @@
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="78dp">
    <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
     android:layout_marginEnd="7dp" android:layout_width="72dp" android:layout_height="72dp"/>
-   <TextView android:id="@+id/title" android:text="Zope Flash Cards v9.0.1" android:textSize="19sp" android:textStyle="bold"
+   <TextView android:id="@+id/title" android:text="Zope Flash Cards v9.2" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
    <Button android:id="@+id/menuButton" android:text="☰ Menu" android:textAllCaps="false" android:textSize="12sp"
     android:layout_width="88dp" android:layout_height="38dp"/>
@@ -23,9 +23,10 @@
     android:layout_gravity="end|center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
   </FrameLayout>
 
-  <EditText android:id="@+id/search" android:hint="Search cards..." android:singleLine="true" android:drawableStart="@android:drawable/ic_menu_search" android:drawablePadding="8dp"
-   android:paddingLeft="12dp" android:paddingRight="12dp" android:textSize="14sp"
-   android:layout_width="match_parent" android:layout_height="42dp"/>
+  <LinearLayout android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="46dp">
+   <EditText android:id="@+id/search" android:hint="Search cards..." android:singleLine="true" android:drawableStart="@android:drawable/ic_menu_search" android:drawablePadding="8dp" android:paddingLeft="12dp" android:paddingRight="12dp" android:textSize="14sp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="42dp"/>
+   <ImageButton android:id="@+id/filterButton" android:src="@android:drawable/ic_menu_sort_by_size" android:contentDescription="Filter cards" android:background="?android:attr/selectableItemBackgroundBorderless" android:layout_marginStart="6dp" android:layout_width="42dp" android:layout_height="42dp"/>
+  </LinearLayout>
 
   <LinearLayout android:orientation="horizontal" android:layout_marginTop="4dp"
    android:layout_width="match_parent" android:layout_height="7dp">
@@ -61,12 +62,12 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"/>
   </ScrollView>
 
-  <LinearLayout android:orientation="horizontal" android:layout_marginTop="3dp"
+  <LinearLayout android:orientation="horizontal" android:layout_marginTop="3dp" android:paddingLeft="50dp" android:paddingRight="50dp"
    android:layout_width="match_parent" android:layout_height="62dp">
-   <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false" android:textSize="17sp" android:textStyle="bold" android:backgroundTint="#CF9F06" android:textColor="#FFFFFF"
+   <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false" android:textSize="17sp" android:textStyle="bold" android:background="@drawable/main_button_rounded" android:textColor="#FFFFFF"
     android:layout_marginEnd="4dp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
    <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textSize="17sp" android:textStyle="bold"
-    android:backgroundTint="#CF9F06" android:textColor="#FFFFFF" android:layout_marginStart="4dp"
+    android:background="@drawable/main_button_rounded" android:textColor="#FFFFFF" android:layout_marginStart="4dp"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="match_parent"/>
   </LinearLayout>
  </LinearLayout>
