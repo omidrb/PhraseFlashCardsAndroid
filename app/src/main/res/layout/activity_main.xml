@@ -62,11 +62,11 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"/>
   </ScrollView>
 
-  <LinearLayout android:id="@+id/mainBottomBar" android:orientation="horizontal" android:layout_marginTop="3dp" android:paddingLeft="50dp" android:paddingRight="50dp"
+  <LinearLayout android:id="@+id/mainBottomBar" android:orientation="horizontal" android:layout_marginTop="3dp" android:paddingLeft="12dp" android:paddingRight="12dp"
    android:background="@android:color/transparent" android:layout_width="match_parent" android:layout_height="64dp">
-   <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:singleLine="true" android:ellipsize="none" android:gravity="center" android:background="@drawable/main_button_rounded" android:textColor="#141414"
+   <Button android:id="@+id/add" android:text="+ Add Card" android:textAllCaps="false" android:textSize="14sp" android:textStyle="bold" android:singleLine="true" android:autoSizeTextType="uniform" android:autoSizeMinTextSize="11sp" android:autoSizeMaxTextSize="14sp" android:autoSizeStepGranularity="1sp" android:ellipsize="none" android:gravity="center" android:background="@drawable/main_button_rounded" android:textColor="#141414"
     android:layout_marginEnd="4dp" android:layout_weight="0.9" android:layout_width="0dp" android:layout_height="56dp"/>
-   <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textSize="15sp" android:textStyle="bold" android:singleLine="true" android:ellipsize="none" android:gravity="center"
+   <Button android:id="@+id/daily" android:text="Daily Practice" android:textAllCaps="false" android:textSize="14sp" android:textStyle="bold" android:singleLine="true" android:autoSizeTextType="uniform" android:autoSizeMinTextSize="11sp" android:autoSizeMaxTextSize="14sp" android:autoSizeStepGranularity="1sp" android:ellipsize="none" android:gravity="center"
     android:background="@drawable/main_button_rounded" android:textColor="#141414" android:layout_marginStart="4dp"
     android:layout_weight="1.1" android:layout_width="0dp" android:layout_height="56dp"/>
   </LinearLayout>
@@ -88,9 +88,10 @@
    android:layout_weight="1" android:layout_width="match_parent" android:layout_height="0dp">
    <TextView android:id="@+id/phrase" android:gravity="center" android:textStyle="bold" android:textSize="32sp"
     android:maxLines="4" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-   <ImageButton android:id="@+id/practiceListen" android:src="@android:drawable/ic_lock_silent_mode_off" android:contentDescription="Play phrase"
-    android:backgroundTint="#86EFAC" android:tint="#111111" android:padding="10dp" android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
-    android:layout_gravity="center_horizontal" android:layout_width="46dp" android:layout_height="46dp"/>
+   <LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_marginTop="8dp" android:layout_marginBottom="8dp" android:layout_width="match_parent" android:layout_height="52dp">
+    <ImageButton android:id="@+id/practiceListen" android:src="@android:drawable/ic_lock_silent_mode_off" android:contentDescription="Play phrase" android:padding="10dp" android:layout_width="46dp" android:layout_height="46dp"/>
+    <ImageButton android:id="@+id/practiceFavorite" android:src="@android:drawable/btn_star_big_off" android:contentDescription="Favorite" android:background="@android:color/transparent" android:layout_marginStart="10dp" android:layout_width="46dp" android:layout_height="46dp"/>
+   </LinearLayout>
    <LinearLayout android:id="@+id/answerBox" android:visibility="gone" android:orientation="vertical"
     android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
     <TextView android:text="English meaning" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
@@ -131,7 +132,6 @@
     <Button android:id="@+id/drawerImport" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Import CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerExport" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Export active language to CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerBackupRestore" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Backup &amp; Restore" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
-    <Button android:id="@+id/drawerBoxes" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="View by Leitner Box" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerReset" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Reset Leitner progress" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerMode" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Mode" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerVoice" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Voice setting" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
