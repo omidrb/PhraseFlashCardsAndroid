@@ -98,9 +98,10 @@
      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
     <TextView android:id="@+id/meaningEnglish" android:textSize="19sp" android:textStyle="bold"
      android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <TextView android:id="@+id/nativeMeaningLabel" android:text="Native Meaning" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
+    <TextView android:text="معنی فارسی" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
      android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    <TextView android:id="@+id/meaningPersian" android:textSize="20sp" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/meaningPersian" android:textSize="20sp" android:textStyle="bold" android:gravity="right"
+     android:textDirection="rtl" android:layout_width="match_parent" android:layout_height="wrap_content"/>
     <TextView android:text="Example" android:textColor="#3B82F6" android:textStyle="bold" android:textSize="12sp"
      android:layout_marginTop="7dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
     <TextView android:id="@+id/example" android:textSize="17sp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
