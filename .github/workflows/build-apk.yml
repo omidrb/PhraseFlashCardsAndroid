@@ -11,12 +11,12 @@ jobs:
      with: { gradle-version: '8.9' }
    - name: Remove stale legacy Java sources
      run: |
-       rm -rf app/src/main/java/com/zopelab
-       rm -rf app/src/main/java/com/zopelab/zopeflashcards
+       rm -rf app/src/main/java/com/phrasecards
+       rm -rf app/src/main/java/com/phrasecards/zopeflashcards
    - name: Verify package consistency
      run: |
-       ! grep -R "^package com.zopelab" app/src/main/java --include='*.java'
-       grep -R "^package com.phrasecards.app;" app/src/main/java --include='*.java'
+       ! grep -R "^package com.phrasecards" app/src/main/java --include='*.java'
+       grep -R "^package com.zopelab.zopeflashcards;" app/src/main/java --include='*.java'
    - run: gradle clean assembleDebug --stacktrace
    - uses: actions/upload-artifact@v4
      with: { name: ZopeFlashCards-v9.9-fixed-APK, path: app/build/outputs/apk/debug/app-debug.apk }
