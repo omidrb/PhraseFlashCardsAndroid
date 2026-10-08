@@ -1,4 +1,4 @@
-# Zope Flash Cards v10.0
+# Zope Flash Cards v10.1
 
 Zope Flash Cards is an Android language-learning flashcard application for creating, importing, reviewing, and practicing vocabulary and phrases. It combines multilingual card management, Daily Practice, Leitner-style spaced repetition, text-to-speech, favorites, filtering, notifications, CSV exchange, and full backup/restore.
 
@@ -115,7 +115,7 @@ Workflow configuration:
 - Gradle: 8.9
 - Build command: `gradle clean bundleRelease --stacktrace`
 - Output: `app/build/outputs/bundle/release/app-release.aab`
-- GitHub artifact: `ZopeFlashCards-v10.0-GooglePlay-AAB`
+- GitHub artifact: `ZopeFlashCards-v10.1-GooglePlay-AAB`
 
 The workflow also verifies that the source package and Gradle application ID are consistently `com.zopelab.zopeflashcards` and removes stale legacy `com.phrasecards` Java sources before building.
 
@@ -130,3 +130,8 @@ GitHub repository:
 https://github.com/omidrb/PhraseFlashCardsAndroid
 
 Copyright / project identity: **Zope Lab**.
+
+
+## Import from GitHub (v10.1)
+
+Open Menu → Import CSV → Import from Server (GitHub). Collections are read from `server-csv/catalog.json` in the public GitHub `main` branch. Select a collection to download and import. Matching phrases already stored for the same language are skipped (case-insensitive). Local device CSV import remains available. See `server-csv/README.md` to publish collections. An empty catalog is included by default; upload CSVs and add catalog entries to populate the list.
