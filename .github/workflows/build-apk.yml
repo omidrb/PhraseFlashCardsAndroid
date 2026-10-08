@@ -19,9 +19,8 @@ jobs:
        grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle
    - name: Build signed release AAB
      run: gradle clean bundleRelease --stacktrace
-   
-      - name: Verify built AAB version and package
-        run: |
+   - name: Verify built AAB version and package
+     run: |
           python3 - <<'PY'
           import re
           import zipfile
