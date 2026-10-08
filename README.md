@@ -135,3 +135,8 @@ Copyright / project identity: **Zope Lab**.
 ## Import from GitHub (v10.1)
 
 Open Menu → Import CSV → Import from Server (GitHub). Collections are read from `server-csv/catalog.json` in the public GitHub `main` branch. Select a collection to download and import. Matching phrases already stored for the same language are skipped (case-insensitive). Local device CSV import remains available. See `server-csv/README.md` to publish collections. An empty catalog is included by default; upload CSVs and add catalog entries to populate the list.
+
+
+### Google Play release code
+
+This v10.1 source uses **versionCode 49** (48 was present in the previous source archive, but Google Play rejected the uploaded bundle). The workflow verifies the version code and package in the **built AAB** before uploading the artifact. If Google Play has already accepted versionCode 49, increase it again before uploading.

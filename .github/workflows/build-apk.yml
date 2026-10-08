@@ -19,9 +19,19 @@ jobs:
        grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle
    - name: Build signed release AAB
      run: gradle clean bundleRelease --stacktrace
+   - name: Verify built AAB version and package
+     run: |
+       curl --fail --location --retry 3 --output /tmp/bundletool.jar https://repo1.maven.org/maven2/com/android/tools/build/bundletool/1.18.2/bundletool-1.18.2.jar
+       AAB=app/build/outputs/bundle/release/app-release.aab
+       test -s "$AAB"
+       CODE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@android:versionCode)
+       PACKAGE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@package)
+       echo "AAB versionCode: $CODE; package: $PACKAGE"
+       test "$CODE" = "49"
+       test "$PACKAGE" = "com.zopelab.zopeflashcards"
    - name: Upload Google Play bundle
      uses: actions/upload-artifact@v4
      with:
-      name: ZopeFlashCards-v10.1-GooglePlay-AAB
+      name: ZopeFlashCards-v10.1-code49-GooglePlay-AAB
       path: app/build/outputs/bundle/release/app-release.aab
       if-no-files-found: error
