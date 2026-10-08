@@ -21,29 +21,14 @@ jobs:
      run: gradle clean bundleRelease --stacktrace
    - name: Verify built AAB version and package
      run: |
-          python3 - <<'PY'
-          import re
-          import zipfile
-          from pathlib import Path
-
-          gradle = Path("app/build.gradle").read_text()
-          manifest = Path("app/src/main/AndroidManifest.xml").read_text()
-          aab = Path("app/build/outputs/bundle/release/app-release.aab")
-
-          assert re.search(r'versionCode\s+49\b', gradle), "Wrong versionCode"
-          assert re.search(r'versionName\s+"10\.1"', gradle), "Wrong versionName"
-          assert 'com.zopelab.zopeflashcards' in gradle, "Wrong package"
-          assert aab.is_file(), "AAB file not found"
-
-          with zipfile.ZipFile(aab) as bundle:
-              assert bundle.testzip() is None, "Corrupt AAB"
-              assert "base/manifest/AndroidManifest.xml" in bundle.namelist(), "Missing AAB manifest"
-
-          print("AAB archive and Gradle configuration verified.")
-          print("Expected versionCode: 49")
-          print("Expected package: com.zopelab.zopeflashcards")
-          PY
-
+       curl --fail --location --retry 3 --output /tmp/bundletool.jar https://repo1.maven.org/maven2/com/android/tools/build/bundletool/1.18.2/bundletool-1.18.2.jar
+       AAB=app/build/outputs/bundle/release/app-release.aab
+       test -s "$AAB"
+       CODE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@android:versionCode)
+       PACKAGE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@package)
+       echo "AAB versionCode: $CODE; package: $PACKAGE"
+       test "$CODE" = "49"
+       test "$PACKAGE" = "com.zopelab.zopeflashcards"
    - name: Upload Google Play bundle
      uses: actions/upload-artifact@v4
      with:
