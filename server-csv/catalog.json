@@ -2,19 +2,19 @@
 {
   "files": [
     {
-      "file": "English-200-phrases.csv",
+      "file": "English_200.csv",
       "title": "200 English Phrases",
       "language": "English",
       "description": ""
     },
     {
-      "file": "Norwegian-300-phrases.csv",
-      "title": "200 Norwegian Phrases",
+      "file": "Norwegian_300.csv",
+      "title": "300 Norwegian Phrases",
       "language": "Norwegian",
       "description": ""
     },
     {
-      "file": "German-200-phrases.csv",
+      "file": "German_200.csv",
       "title": "200 German Phrases",
       "language": "German",
       "description": ""
