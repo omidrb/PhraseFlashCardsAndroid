@@ -208,7 +208,64 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  void writeBackup(Uri u){try{BufferedWriter w=new BufferedWriter(new OutputStreamWriter(getContentResolver().openOutputStream(u),"UTF-8"));w.write(makeBackup().toString(2));w.close();Toast.makeText(this,"Full backup created",Toast.LENGTH_LONG).show();}catch(Exception e){AlertDialog d=new AlertDialog.Builder(this).setTitle("Backup error").setMessage(String.valueOf(e.getMessage())).setPositiveButton("OK",null).create();showStyled(d);}}
  void readBackup(Uri u){try{BufferedReader br=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(u),"UTF-8"));StringBuilder b=new StringBuilder();String line;while((line=br.readLine())!=null)b.append(line);br.close();JSONObject root=new JSONObject(b.toString());if(root.optInt("backupVersion",-1)!=1||!root.has("preferences"))throw new Exception("This is not a supported Zope Flash Cards backup.");JSONObject prefs=root.getJSONObject("preferences");SharedPreferences.Editor ed=sp.edit().clear();if(root.has("nativeLanguage"))ed.putString("native_language",root.optString("nativeLanguage","Persian")).putBoolean("native_language_selected",true);Iterator<String> keys=prefs.keys();while(keys.hasNext()){String k=keys.next();JSONObject item=prefs.getJSONObject(k);String t=item.getString("type");if(t.equals("string"))ed.putString(k,item.optString("value",""));else if(t.equals("int"))ed.putInt(k,item.getInt("value"));else if(t.equals("long"))ed.putLong(k,item.getLong("value"));else if(t.equals("float"))ed.putFloat(k,(float)item.getDouble("value"));else if(t.equals("boolean"))ed.putBoolean(k,item.getBoolean("value"));else if(t.equals("stringSet")){HashSet<String> set=new HashSet<>();JSONArray a=item.getJSONArray("value");for(int j=0;j<a.length();j++)set.add(a.getString(j));ed.putStringSet(k,set);}}ed.apply();Toast.makeText(this,"Backup restored. Reloading app…",Toast.LENGTH_LONG).show();new Handler(Looper.getMainLooper()).postDelayed(()->recreate(),450);}catch(Exception e){AlertDialog d=new AlertDialog.Builder(this).setTitle("Restore error").setMessage(String.valueOf(e.getMessage())).setPositiveButton("OK",null).create();showStyled(d);}}
  void exportCsv(){Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.setType("text/csv");i.putExtra(Intent.EXTRA_TITLE,"phrase_cards_"+lang.toLowerCase()+".csv");startActivityForResult(i,EXPORT_CSV);}
- void importCsv(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.setType("text/*");startActivityForResult(i,IMPORT_CSV);}
+ void importCsv(){new AlertDialog.Builder(this).setTitle("Import CSV").setItems(new String[]{"Import from Device","Import from Server (GitHub)"},(d,which)->{if(which==0)importCsvFromDevice();else loadServerCatalog();}).setNegativeButton("Cancel",null).show();}
+ void importCsvFromDevice(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.setType("text/*");i.addCategory(Intent.CATEGORY_OPENABLE);startActivityForResult(i,IMPORT_CSV);}
+ static final String CATALOG_URL="https://raw.githubusercontent.com/omidrb/PhraseFlashCardsAndroid/main/server-csv/catalog.json";
+ void loadServerCatalog(){
+  final ProgressDialog progress=ProgressDialog.show(this,"GitHub CSV","Loading available collections...",true,false);
+  new Thread(()->{try{
+   String content=fetchServerText(CATALOG_URL);JSONObject catalog=new JSONObject(content);JSONArray files=catalog.getJSONArray("files");
+   ArrayList<JSONObject> entries=new ArrayList<>();ArrayList<String> labels=new ArrayList<>();
+   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);labels.add(f.optString("title",path)+"  •  "+f.optString("language","English")+"\n"+f.optString("description",""));}
+   runOnUiThread(()->{progress.dismiss();if(entries.isEmpty()){new AlertDialog.Builder(this).setMessage("No CSV collections are published yet. Add entries to server-csv/catalog.json on GitHub.").setPositiveButton("OK",null).show();return;}
+    new AlertDialog.Builder(this).setTitle("Import from Server").setItems(labels.toArray(new String[0]),(d,idx)->confirmServerImport(entries.get(idx))).setNegativeButton("Cancel",null).show();});
+  }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle("Server import unavailable").setMessage(ex.getMessage()).setPositiveButton("OK",null).show();});}}).start();
+ }
+ String fetchServerText(String urlString)throws Exception{
+  java.net.HttpURLConnection conn=(java.net.HttpURLConnection)new java.net.URL(urlString).openConnection();
+  conn.setConnectTimeout(12000);conn.setReadTimeout(20000);conn.setInstanceFollowRedirects(true);
+  try{if(conn.getResponseCode()!=200)throw new IOException("HTTP "+conn.getResponseCode()+" when loading GitHub CSV.");
+   ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(InputStream in=conn.getInputStream()){byte[] buf=new byte[8192];int n;while((n=in.read(buf))!=-1){bytes.write(buf,0,n);if(bytes.size()>4*1024*1024)throw new IOException("CSV exceeds 4 MB limit.");}}
+   return bytes.toString("UTF-8");
+  }finally{conn.disconnect();}
+ }
+ void confirmServerImport(JSONObject file){
+  String language=file.optString("language","English");String path=file.optString("file");
+  new AlertDialog.Builder(this).setTitle("Import "+file.optString("title",path)).setMessage("Import into "+language+"? Existing cards with the same phrase in this language will be skipped.").setNegativeButton("Cancel",null).setPositiveButton("Import",(d,w)->downloadServerCsv(path,language)).show();
+ }
+ void downloadServerCsv(String path,String language){
+  if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))return;
+  final ProgressDialog progress=ProgressDialog.show(this,"Import from Server","Downloading CSV...",true,false);
+  new Thread(()->{try{String csv=fetchServerText("https://raw.githubusercontent.com/omidrb/PhraseFlashCardsAndroid/main/server-csv/"+path);
+   runOnUiThread(()->{progress.dismiss();importServerRows(csv,language);});
+  }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle("Download failed").setMessage(ex.getMessage()).setPositiveButton("OK",null).show();});}}).start();
+ }
+ void importServerRows(String csv,String language){
+  try{
+   ArrayList<ArrayList<String>> rows=new ArrayList<>();for(String line:csv.replace("\r\n","\n").split("\n"))if(!line.trim().isEmpty())rows.add(parseCsv(line));
+   if(rows.isEmpty())throw new IOException("CSV is empty");
+   ArrayList<String> header=rows.get(0);int phraseCol=-1,enCol=-1,nativeCol=-1,exampleCol=-1,usageCol=-1;
+   for(int i=0;i<header.size();i++){String h=header.get(i).trim().toLowerCase(Locale.ROOT).replace("_"," ");
+    if(h.equals("phrase")||h.equals("word")||h.equals("expression"))phraseCol=i;
+    else if(h.contains("example"))exampleCol=i;
+    else if(h.contains("usage"))usageCol=i;
+    else if(h.contains("persian")||h.contains("farsi")||h.contains("native")||h.contains("فارسی"))nativeCol=i;
+    else if(h.contains("english")||h.contains("explanation")||h.equals("meaning"))enCol=i;
+   }
+   if(phraseCol<0)throw new IOException("CSV requires a Phrase column");
+   if(!decks.contains(language)){decks.add(language);saveDecks();}
+   HashSet<String> known=new HashSet<>();for(Card c:cards)if(c.lang.equalsIgnoreCase(language))known.add(c.p.trim().toLowerCase(Locale.ROOT));
+   int added=0,skipped=0;
+   for(int i=1;i<rows.size();i++){ArrayList<String> row=rows.get(i);String phraseValue=getCol(row,phraseCol).trim();if(phraseValue.isEmpty())continue;
+    String key=phraseValue.toLowerCase(Locale.ROOT);if(!known.add(key)){skipped++;continue;}
+    String english=getCol(row,enCol).trim(),nativeText=getCol(row,nativeCol).trim(),examples=getCol(row,exampleCol).trim();
+    if(usageCol>=0&&!getCol(row,usageCol).trim().isEmpty())english+=(english.isEmpty()?"":"\n")+"Usage: "+getCol(row,usageCol).trim();
+    cards.add(new Card("c"+System.currentTimeMillis()+"_srv_"+i,language,phraseValue,english,nativeText,"",examples));added++;
+   }
+   saveCustom();renderLibrary();new AlertDialog.Builder(this).setTitle("Import complete").setMessage(added+" new cards added to "+language+".\n"+skipped+" existing cards skipped.").setPositiveButton("OK",null).show();
+  }catch(Exception ex){new AlertDialog.Builder(this).setTitle("CSV import error").setMessage(ex.getMessage()).setPositiveButton("OK",null).show();}
+ }
+
  String esc(String s){return "\""+(s==null?"":s.replace("\"","\"\""))+"\"";}
  protected void onActivityResult(int r,int c,Intent data){super.onActivityResult(r,c,data);if(c!=RESULT_OK||data==null)return;try{Uri u=data.getData();if(r==EXPORT_BACKUP){writeBackup(u);return;}else if(r==IMPORT_BACKUP){readBackup(u);return;}else if(r==EXPORT_CSV){BufferedWriter w=new BufferedWriter(new OutputStreamWriter(getContentResolver().openOutputStream(u),"UTF-8"));w.write("Phrase,English Meaning,"+esc(nativeMeaningName())+",Example\n");int count=0;for(Card x:cards)if(x.lang.equals(lang)){w.write(esc(x.p)+","+esc(x.en)+","+esc(x.fa)+","+esc(x.e)+"\n");count++;}w.close();Toast.makeText(this,count+" "+lang+" cards exported",Toast.LENGTH_LONG).show();}else{BufferedReader br=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(u),"UTF-8"));ArrayList<ArrayList<String>> rows=new ArrayList<>();String line;while((line=br.readLine())!=null)if(!line.trim().isEmpty())rows.add(parseCsv(line));br.close();if(rows.isEmpty())return;int phraseCol=0,enCol=-1,faCol=-1,exCol=-1,startRow=0;ArrayList<String> hdr=rows.get(0);boolean header=false;for(int i=0;i<hdr.size();i++){String h=hdr.get(i).trim().toLowerCase(Locale.ROOT).replace("_"," ");if(h.contains("phrase")||h.equals("word")||h.contains("expression")){phraseCol=i;header=true;}else if(h.contains("persian")||h.contains("farsi")||h.contains("فارسی")||h.equals(nativeMeaningName().toLowerCase(Locale.ROOT))||h.contains(nativeLanguage().toLowerCase(Locale.ROOT)+" meaning")||h.equals("native meaning")){faCol=i;header=true;}else if(h.contains("example")||h.contains("sentence")){exCol=i;header=true;}else if(h.contains("english")||h.contains("meaning")||h.contains("definition")||h.contains("explanation")){enCol=i;header=true;}}if(header)startRow=1;int count=0;for(int ri=startRow;ri<rows.size();ri++){ArrayList<String>a=rows.get(ri);if(a.isEmpty())continue;String p=getCol(a,phraseCol),enV=getCol(a,enCol),faV=getCol(a,faCol),exV=getCol(a,exCol);if(!header){p=getCol(a,0);for(int i=1;i<a.size();i++){String v=getCol(a,i);if(v.isEmpty())continue;if((hasPersian(v)||looksNativeText(v))&&faV.isEmpty())faV=v;else if(looksExample(v)&&exV.isEmpty())exV=v;else if(enV.isEmpty())enV=v;else if(exV.isEmpty())exV=v;}}else{for(int i=0;i<a.size();i++){if(i==phraseCol||i==enCol||i==faCol||i==exCol)continue;String v=getCol(a,i);if(v.isEmpty())continue;if((hasPersian(v)||looksNativeText(v))&&faV.isEmpty())faV=v;else if(looksExample(v)&&exV.isEmpty())exV=v;else if(enV.isEmpty())enV=v;}}if(!p.trim().isEmpty()){cards.add(new Card("c"+System.currentTimeMillis()+"_"+count,lang,p.trim(),enV.trim(),faV.trim(),"",exV.trim()));count++;}}saveCustom();Toast.makeText(this,count+" cards intelligently imported into "+lang,Toast.LENGTH_LONG).show();renderLibrary();}}catch(Exception e){AlertDialog er=new AlertDialog.Builder(this).setTitle("CSV error").setMessage(String.valueOf(e.getMessage())).setPositiveButton("OK",null).create();showStyled(er);}}
  String getCol(ArrayList<String>a,int i){return i>=0&&i<a.size()?a.get(i):"";}
