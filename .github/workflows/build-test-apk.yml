@@ -1,4 +1,4 @@
-name: Build Test APK (v10.1)
+name: Build Test APK (v10.2)
 
 on:
   workflow_dispatch:
@@ -30,11 +30,11 @@ jobs:
       - name: Verify APK exists
         run: |
           test -s app/build/outputs/apk/debug/app-debug.apk
-          grep -Eq 'versionCode[[:space:]]+49' app/build.gradle
+          grep -Eq 'versionCode[[:space:]]+50' app/build.gradle
           grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle
       - name: Upload test APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZopeFlashCards-v10.1-code49-Test-APK
+          name: ZopeFlashCards-v10.2-code50-Test-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
