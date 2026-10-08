@@ -4,25 +4,21 @@
       "file": "english-200-phrases.csv",
       "title": "200 Common English Phrases",
       "language": "English",
-      "description": "Everyday English expressions with Persian translations"
     },
     {
       "file": "norwegian-200-phrases.csv",
       "title": "200 Common Norwegian Phrases",
       "language": "Norwegian",
-      "description": "Useful Norwegian phrases for daily conversations"
     },
     {
       "file": "german-200-phrases.csv",
       "title": "200 Common German Phrases",
       "language": "German",
-      "description": "Common German expressions with translations and examples"
     },
     {
       "file": "english-business.csv",
       "title": "Business English",
       "language": "English",
-      "description": "Professional expressions for meetings and workplace communication"
     }
   ]
 }
