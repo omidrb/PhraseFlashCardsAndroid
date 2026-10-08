@@ -14,11 +14,6 @@
       "file": "german-200-phrases.csv",
       "title": "200 Common German Phrases",
       "language": "German",
-    },
-    {
-      "file": "english-business.csv",
-      "title": "Business English",
-      "language": "English",
     }
   ]
 }
