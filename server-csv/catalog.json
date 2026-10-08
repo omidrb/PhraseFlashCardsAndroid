@@ -1,5 +1,5 @@
 {
-{"file":"zope_flashcards_200_english_phrases.csv","title":"English phrases","language":"English","description":"Everyday conversation"}
-{"file":"zope_flashcards_200_german_phrases.csv","title":"English phrases","language":"English","description":"Everyday conversation"}
+  ["file":"zope_flashcards_200_english_phrases.csv","title":"English phrases","language":"English","description":"Everyday conversation"],
+  [ "file":"zope_flashcards_200_german_phrases.csv","title":"English phrases","language":"English","description":"Everyday conversation"]
 
 }
