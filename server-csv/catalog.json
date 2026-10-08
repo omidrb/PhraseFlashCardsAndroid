@@ -2,17 +2,17 @@
   "files": [
     {
       "file": "english-200-phrases.csv",
-      "title": "200 Common English Phrases",
+      "title": "200 English Phrases",
       "language": "English",
     },
     {
       "file": "norwegian-200-phrases.csv",
-      "title": "200 Common Norwegian Phrases",
+      "title": "200 Norwegian Phrases",
       "language": "Norwegian",
     },
     {
       "file": "german-200-phrases.csv",
-      "title": "200 Common German Phrases",
+      "title": "200 German Phrases",
       "language": "German",
     }
   ]
