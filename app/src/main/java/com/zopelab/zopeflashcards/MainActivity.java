@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity{
  String nativeMeaningName(){String n=nativeLanguage();return (n.equals("Other")?sp.getString("native_language_other","Native"):n)+" Meaning";}
  boolean nativeRtl(){String n=nativeLanguage();return n.equals("Persian")||n.equals("Arabic")||n.equals("Urdu")||n.equals("Hebrew");}
  void applyNativeMeaningUi(){if(nativeMeaningLabel!=null)nativeMeaningLabel.setText(nativeMeaningName());if(faMeaning!=null){faMeaning.setTextDirection(nativeRtl()?View.TEXT_DIRECTION_RTL:View.TEXT_DIRECTION_LTR);faMeaning.setGravity(nativeRtl()?Gravity.RIGHT:Gravity.LEFT);}}
- String[] sortedNativeLanguages(){String[] result=NATIVE_LANGUAGES.clone();Arrays.sort(result,String.CASE_INSENSITIVE_ORDER);return result;}\n void showNativeLanguageDialog(boolean required){int checked=Arrays.asList(sortedNativeLanguages()).indexOf(nativeLanguage());if(checked<0)checked=0;final int initial=checked;AlertDialog d=new AlertDialog.Builder(this).setTitle("Select your native language").setSingleChoiceItems(sortedNativeLanguages(),checked,null).setPositiveButton("Save",null).create();d.setCancelable(!required);d.setCanceledOnTouchOutside(!required);d.setOnShowListener(v->{d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int pos=d.getListView().getCheckedItemPosition();if(pos<0)pos=initial;String n=sortedNativeLanguages()[pos];if(n.equals("Other")){EditText input=new EditText(this);input.setHint("Native language name");input.setText(sp.getString("native_language_other",""));AlertDialog od=new AlertDialog.Builder(this).setTitle("Other native language").setView(input).setNegativeButton("Cancel",null).setPositiveButton("Save",(q,w)->{String custom=input.getText().toString().trim();if(custom.isEmpty())custom="Native";sp.edit().putString("native_language","Other").putString("native_language_other",custom).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();d.dismiss();}).create();showStyled(od);}else{sp.edit().putString("native_language",n).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();d.dismiss();}});});d.show();}
+ String[] sortedNativeLanguages(){String[] result=NATIVE_LANGUAGES.clone();Arrays.sort(result,String.CASE_INSENSITIVE_ORDER);return result;}
+ void showNativeLanguageDialog(boolean required){int checked=Arrays.asList(sortedNativeLanguages()).indexOf(nativeLanguage());if(checked<0)checked=0;final int initial=checked;AlertDialog d=new AlertDialog.Builder(this).setTitle("Select your native language").setSingleChoiceItems(sortedNativeLanguages(),checked,null).setPositiveButton("Save",null).create();d.setCancelable(!required);d.setCanceledOnTouchOutside(!required);d.setOnShowListener(v->{d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int pos=d.getListView().getCheckedItemPosition();if(pos<0)pos=initial;String n=sortedNativeLanguages()[pos];if(n.equals("Other")){EditText input=new EditText(this);input.setHint("Native language name");input.setText(sp.getString("native_language_other",""));AlertDialog od=new AlertDialog.Builder(this).setTitle("Other native language").setView(input).setNegativeButton("Cancel",null).setPositiveButton("Save",(q,w)->{String custom=input.getText().toString().trim();if(custom.isEmpty())custom="Native";sp.edit().putString("native_language","Other").putString("native_language_other",custom).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();d.dismiss();}).create();showStyled(od);}else{sp.edit().putString("native_language",n).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();d.dismiss();}});});d.show();}
  boolean looksNativeText(String s){if(s==null||s.trim().isEmpty())return false;if(nativeRtl()){for(char c:s.toCharArray())if(c>=0x0590&&c<=0x08FF)return true;}return false;}
  boolean hasPersian(String s){for(char c:s.toCharArray())if(c>=0x0600&&c<=0x06FF)return true;return false;}
  void styleSpeakerButton(ImageButton b){if(b==null)return;b.setBackgroundTintList(null);b.setColorFilter(Color.WHITE);GradientDrawable g=new GradientDrawable();g.setColor(Color.rgb(118,168,123));g.setCornerRadius(dp(22));b.setBackground(g);b.setPadding(dp(10),dp(10),dp(10),dp(10));}
@@ -258,7 +259,8 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
    runOnUiThread(()->{progress.dismiss();importServerRows(csv,language);});
   }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle("Download failed").setMessage(ex.getMessage()).setPositiveButton("OK",null).show();});}}).start();
  }
- boolean headerMatchesNative(String header){String h=header.toLowerCase(Locale.ROOT);String n=nativeLanguage().toLowerCase(Locale.ROOT);return h.contains(n)||h.contains("native")||n.equals("persian")&&(h.contains("farsi")||h.contains("فارسی"));}\n void importServerRows(String csv,String language){
+ boolean headerMatchesNative(String header){String h=header.toLowerCase(Locale.ROOT);String n=nativeLanguage().toLowerCase(Locale.ROOT);return h.contains(n)||h.contains("native")||n.equals("persian")&&(h.contains("farsi")||h.contains("فارسی"));}
+ void importServerRows(String csv,String language){
   try{
    ArrayList<ArrayList<String>> rows=new ArrayList<>();for(String line:csv.replace("\r\n","\n").split("\n"))if(!line.trim().isEmpty())rows.add(parseCsv(line));
    if(rows.isEmpty())throw new IOException("CSV is empty");
@@ -273,10 +275,12 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
    if(phraseCol<0)throw new IOException("CSV requires a Phrase column");
    if(!decks.contains(language)){decks.add(language);saveDecks();}
    HashSet<String> known=new HashSet<>();for(Card c:cards)if(c.lang.equalsIgnoreCase(language))known.add(c.p.trim().toLowerCase(Locale.ROOT));
-   boolean mismatch=nativeCol>=0&&!headerMatchesNative(header.get(nativeCol));\n   int added=0,skipped=0;
+   boolean mismatch=nativeCol>=0&&!headerMatchesNative(header.get(nativeCol));
+   int added=0,skipped=0;
    for(int i=1;i<rows.size();i++){ArrayList<String> row=rows.get(i);String phraseValue=getCol(row,phraseCol).trim();if(phraseValue.isEmpty())continue;
     String key=phraseValue.toLowerCase(Locale.ROOT);if(!known.add(key)){skipped++;continue;}
-    String english=getCol(row,enCol).trim(),nativeText=getCol(row,nativeCol).trim(),examples=getCol(row,exampleCol).trim();\n    if(nativeCol>=0&&!headerMatchesNative(header.get(nativeCol)))nativeText="";
+    String english=getCol(row,enCol).trim(),nativeText=getCol(row,nativeCol).trim(),examples=getCol(row,exampleCol).trim();
+    if(nativeCol>=0&&!headerMatchesNative(header.get(nativeCol)))nativeText="";
     if(usageCol>=0&&!getCol(row,usageCol).trim().isEmpty())english+=(english.isEmpty()?"":"\n")+"Usage: "+getCol(row,usageCol).trim();
     cards.add(new Card("c"+System.currentTimeMillis()+"_srv_"+i,language,phraseValue,english,nativeText,"",examples));added++;
    }
