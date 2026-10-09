@@ -8,7 +8,7 @@
   android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
 
   <LinearLayout android:gravity="center_vertical" android:layout_width="match_parent" android:layout_height="78dp">
-   <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="centerCrop"
+   <ImageView android:id="@+id/titleIcon" android:src="@drawable/zope_title_icon" android:scaleType="fitCenter"
     android:layout_marginEnd="7dp" android:layout_width="72dp" android:layout_height="72dp"/>
    <TextView android:id="@+id/title" android:text="Zope Flash Cards v9.4.1" android:textSize="19sp" android:textStyle="bold"
     android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
@@ -127,10 +127,11 @@
   <ScrollView android:id="@+id/drawerPanel" android:background="?android:colorBackground" android:clickable="true" android:layout_gravity="start" android:layout_width="300dp" android:layout_height="match_parent">
    <LinearLayout android:orientation="vertical" android:paddingLeft="24dp" android:paddingRight="24dp" android:paddingTop="42dp" android:paddingBottom="30dp" android:layout_width="match_parent" android:layout_height="wrap_content">
     <TextView android:text="Zope Flash Cards" android:textStyle="bold" android:textSize="22sp" android:layout_marginBottom="24dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <Button android:id="@+id/drawerLanguage" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Switch language" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
-    <Button android:id="@+id/drawerAddLanguage" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Add new language" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerLanguage" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Switch Library" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerAddLanguage" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Add a new Library" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerMainLanguage" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Main Language" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerImport" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Import CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
-    <Button android:id="@+id/drawerExport" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Export active language to CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
+    <Button android:id="@+id/drawerExport" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Export to CSV" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerBackupRestore" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Backup &amp; Restore" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerReset" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Reset Leitner progress" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
     <Button android:id="@+id/drawerMode" android:backgroundTint="#7D9BC7" android:textColor="#FFFFFF" android:text="Mode" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="50dp"/>
