@@ -1,4 +1,4 @@
-# Zope Flash Cards v10.2
+# Zope Flash Cards v10.1
 
 Zope Flash Cards is an Android language-learning flashcard application for creating, importing, reviewing, and practicing vocabulary and phrases. It combines multilingual card management, Daily Practice, Leitner-style spaced repetition, text-to-speech, favorites, filtering, notifications, CSV exchange, and full backup/restore.
 
@@ -141,7 +141,5 @@ Open Menu → Import CSV → Import from Server (GitHub). Collections are read f
 
 This v10.1 source uses **versionCode 49** (48 was present in the previous source archive, but Google Play rejected the uploaded bundle). The workflow verifies the version code and package in the **built AAB** before uploading the artifact. If Google Play has already accepted versionCode 49, increase it again before uploading.
 
-## v10.2 CSV importer fix
-- Handles UTF-8 BOM in GitHub CSV and device CSV headers.
-- GitHub CSV errors show detected headers for troubleshooting.
-- Release code 50; workflow bundletool download uses the official GitHub release asset.
+## Experimental v10.2 source changes
+This is a partial, uncompiled update, versionCode 50. Server import dialog uses a scrollable rounded collection list with language-first headings; import source chooser is styled and no longer says GitHub; native language selection is alphabetized; CSV header mismatches in server imports suppress native translations. Full UI localization, local CSV mismatch validation, and swipe navigation are not yet implemented. Do not publish without completing and testing those requirements.
