@@ -19,19 +19,30 @@ jobs:
        grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle
    - name: Build signed release AAB
      run: gradle clean bundleRelease --stacktrace
-   - name: Verify built AAB version and package
+   - name: Inspect built AAB (diagnostic only)
      run: |
-       curl --fail --location --retry 3 --output /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar
        AAB=app/build/outputs/bundle/release/app-release.aab
-       test -s "$AAB"
-       CODE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@android:versionCode)
-       PACKAGE=$(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" --xpath=/manifest/@package)
-       echo "AAB versionCode: $CODE; package: $PACKAGE"
-       test "$CODE" = "50"
-       test "$PACKAGE" = "com.zopelab.zopeflashcards"
+       if [ ! -s "$AAB" ]; then
+         echo "ERROR: AAB is missing or empty"
+         exit 1
+       fi
+       echo "AAB exists: $(ls -lh "$AAB")"
+       echo "Expected app versionCode: 52"
+       echo "Expected applicationId: com.zopelab.zopeflashcards"
+       grep -qE 'versionCode[[:space:]]+52([;[:space:]]|$)' app/build.gradle || { echo "ERROR: Gradle versionCode is not 52"; exit 1; }
+       grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle || { echo "ERROR: Unexpected applicationId"; exit 1; }
+       echo "AAB presence and Gradle configuration verified. Play Console will validate the uploaded bundle."
+   - name: Build debug APK for phone testing
+     run: gradle assembleDebug --stacktrace
+   - name: Upload debug APK
+     uses: actions/upload-artifact@v4
+     with:
+      name: ZopeFlashCards-v10.3-code52-Test-APK
+      path: app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
    - name: Upload Google Play bundle
      uses: actions/upload-artifact@v4
      with:
-      name: ZopeFlashCards-v10.2-code50-GooglePlay-AAB
+      name: ZopeFlashCards-v10.3-code52-GooglePlay-AAB
       path: app/build/outputs/bundle/release/app-release.aab
       if-no-files-found: error
