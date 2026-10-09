@@ -1,5 +1,5 @@
 plugins { id 'com.android.application' }
 android { namespace 'com.zopelab.zopeflashcards'; compileSdk 36
  signingConfigs { zope { storeFile file('zope-update.jks'); storePassword 'ZopeFlashCards2026'; keyAlias 'zope'; keyPassword 'ZopeFlashCards2026' } }
- defaultConfig { applicationId "com.zopelab.zopeflashcards"; minSdk 24; targetSdk 36; versionCode 50; versionName "10.2"; signingConfig signingConfigs.zope } }
+ defaultConfig { applicationId "com.zopelab.zopeflashcards"; minSdk 24; targetSdk 36; versionCode 51; versionName "10.2"; signingConfig signingConfigs.zope } }
 dependencies { implementation 'androidx.appcompat:appcompat:1.7.0'; implementation 'com.google.android.material:material:1.12.0' }
