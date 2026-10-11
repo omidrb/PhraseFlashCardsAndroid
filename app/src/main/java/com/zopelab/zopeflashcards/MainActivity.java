@@ -272,7 +272,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   if(drawerSettings!=null)drawerSettings.setVisibility(View.VISIBLE);
   drawerSettings.setText("← "+tr("Settings"));
   if(practiceDrawerButton==null){
-   practiceDrawerButton=new Button(this);practiceDrawerButton.setTextAllCaps(false);
+   practiceDrawerButton=new Button(this);practiceDrawerButton.setAllCaps(false);
    practiceDrawerButton.setTextColor(Color.WHITE);practiceDrawerButton.setTextSize(16);
    practiceDrawerButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(125,155,199)));
    android.view.ViewGroup parent=(android.view.ViewGroup)drawerSettings.getParent();
