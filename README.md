@@ -155,3 +155,12 @@ This is a partial, uncompiled update, versionCode 51. Server import dialog uses 
 - Sliding drawer buttons have more rounded corners. Dialog button alignment styling was adjusted.
 
 **Validation status:** Source package only. A full Android build, release signing validation, and device testing have not been completed. Some existing legacy messages may still need localization audit. APK and AAB must be generated and verified using the GitHub Actions workflow before distribution.
+
+## v11.1 (versionCode 60) — UI refinement
+
+- Added vertical spacing between drawer menu and Settings submenu buttons.
+- Moved Cancel/Close to the end of applicable dialog action rows.
+- Card View now animates outgoing and incoming cards horizontally for a more natural swipe.
+- About includes an Updates button with the current release highlights.
+
+**Validation:** Source prepared; Android APK/AAB compilation and device testing not performed here.

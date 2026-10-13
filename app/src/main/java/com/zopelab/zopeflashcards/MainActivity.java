@@ -237,26 +237,23 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
 
   dlg.setContentView(scroll);Window win=dlg.getWindow();if(win!=null){win.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));win.setLayout((int)(getResources().getDisplayMetrics().widthPixels-dp(60)),WindowManager.LayoutParams.WRAP_CONTENT);}
   close.setOnClickListener(v->dlg.dismiss());edit.setOnClickListener(v->{dlg.dismiss();editDialog(c);});move.setOnClickListener(v->{dlg.dismiss();chooseBox(c);});del.setOnClickListener(v->{dlg.dismiss();deleteOne(c);});
-  dlg.setOnShowListener(v->{Window w=dlg.getWindow();if(w!=null){w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));w.setLayout((int)(getResources().getDisplayMetrics().widthPixels-dp(60)),WindowManager.LayoutParams.WRAP_CONTENT);}});dlg.show();
+  dlg.setOnShowListener(v->{Window w=dlg.getWindow();if(w!=null){w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));w.setLayout((int)(getResources().getDisplayMetrics().widthPixels-dp(60)),WindowManager.LayoutParams.WRAP_CONTENT);
+    int direction=pendingCardSwipeDirection;pendingCardSwipeDirection=0;
+    if(direction!=0){View card=w.getDecorView();card.setTranslationX(direction*dp(210));card.setAlpha(0.25f);
+     card.animate().translationX(0).alpha(1f).setDuration(205).setInterpolator(new DecelerateInterpolator()).start();}
+   }});dlg.show();
  }
+ int pendingCardSwipeDirection=0;
  void scrollSwipeNext(Dialog current,Card next,boolean forward){
-  Window window=current.getWindow();
-  View content=window==null?null:window.getDecorView();
+  Window window=current.getWindow();View content=window==null?null:window.getDecorView();
   if(content==null){current.dismiss();showCardDialog(next);return;}
-  content.animate().translationX(forward?-dp(110):dp(110)).alpha(0.4f).setDuration(95)
-   .withEndAction(()->{current.dismiss();showCardDialog(next);
-    // Animate the replacement card into place from the swipe direction.
-    // Dialog window content is initialized synchronously in showCardDialog.
-   }).start();
+  final int direction=forward?1:-1;
+  content.animate().cancel();
+  content.animate().translationX(-direction*dp(240)).alpha(0.15f)
+   .setDuration(155).setInterpolator(new AccelerateInterpolator())
+   .withEndAction(()->{pendingCardSwipeDirection=direction;current.dismiss();showCardDialog(next);}).start();
  }
- void initTts(){tts=new TextToSpeech(this,status->{ttsReady=status==TextToSpeech.SUCCESS;if(ttsReady)tts.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener(){public void onStart(String id){}public void onDone(String id){runOnUiThread(()->stopSpeakerAnimation());}public void onError(String id){runOnUiThread(()->stopSpeakerAnimation());}public void onStop(String id,boolean interrupted){runOnUiThread(()->stopSpeakerAnimation());}});});}
- Locale localeForLanguage(String l){String x=l==null?"":l.toLowerCase(Locale.ROOT);if(x.contains("norwegian")||x.contains("norsk"))return new Locale("nb","NO");if(x.contains("german"))return Locale.GERMAN;if(x.contains("french"))return Locale.FRENCH;if(x.contains("spanish"))return new Locale("es","ES");if(x.contains("italian"))return Locale.ITALIAN;if(x.contains("persian")||x.contains("farsi")||x.contains("فارسی"))return new Locale("fa","IR");return Locale.ENGLISH;}
- void startSpeakerAnimation(ImageButton b){stopSpeakerAnimation();if(b==null)return;activeSpeaker=b;android.view.animation.ScaleAnimation a=new android.view.animation.ScaleAnimation(1f,1.16f,1f,1.16f,android.view.animation.Animation.RELATIVE_TO_SELF,.5f,android.view.animation.Animation.RELATIVE_TO_SELF,.5f);a.setDuration(280);a.setRepeatMode(android.view.animation.Animation.REVERSE);a.setRepeatCount(android.view.animation.Animation.INFINITE);speakerAnimation=a;b.startAnimation(a);}
- void stopSpeakerAnimation(){if(activeSpeaker!=null){activeSpeaker.clearAnimation();activeSpeaker=null;}speakerAnimation=null;}
- void speakPhrase(Card c){speakPhrase(c,null);}
- void speakPhrase(Card c,ImageButton source){if(!ttsReady||tts==null){Toast.makeText(this,"Speech engine is not ready yet.",Toast.LENGTH_SHORT).show();return;}int r=tts.setLanguage(localeForLanguage(c.lang));if(r==TextToSpeech.LANG_MISSING_DATA||r==TextToSpeech.LANG_NOT_SUPPORTED){Toast.makeText(this,"Speech for "+c.lang+" is not installed.",Toast.LENGTH_LONG).show();return;}applyVoiceSettings(c.lang);startSpeakerAnimation(source);tts.speak(c.p,TextToSpeech.QUEUE_FLUSH,null,"phrase_"+c.id);}
 
- void applyVoiceSettings(String language){if(tts==null)return;float rate=sp.getFloat("voice_rate",1.0f);tts.setSpeechRate(rate);try{ArrayList<Voice> vs=voicesFor(language);int idx=Math.max(0,Math.min(3,sp.getInt("voice_type",0)));if(!vs.isEmpty())tts.setVoice(vs.get(Math.min(idx,vs.size()-1)));}catch(Exception ignored){}}
  ArrayList<Voice> voicesFor(String language){ArrayList<Voice> out=new ArrayList<>();if(tts==null||tts.getVoices()==null)return out;Locale target=localeForLanguage(language);for(Voice v:tts.getVoices()){Locale l=v.getLocale();if(l!=null&&l.getLanguage().equals(target.getLanguage())&&!v.isNetworkConnectionRequired())out.add(v);}if(out.size()<4)for(Voice v:tts.getVoices()){Locale l=v.getLocale();if(l!=null&&l.getLanguage().equals(target.getLanguage())&&!out.contains(v))out.add(v);}Collections.sort(out,(a,b)->a.getName().compareToIgnoreCase(b.getName()));return out;}
  void voiceSettings(){LinearLayout box=new LinearLayout(this);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(24),dp(8),dp(24),dp(4));TextView speedLabel=new TextView(this);speedLabel.setText("Speech speed");speedLabel.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);box.addView(speedLabel);RadioGroup speeds=new RadioGroup(this);String[] sr={"0.5x","0.75x","1x"};float current=sp.getFloat("voice_rate",1f);for(int i=0;i<3;i++){RadioButton rb=new RadioButton(this);rb.setText(sr[i]);rb.setId(500+i);speeds.addView(rb);if((i==0&&current<.63f)||(i==1&&current>=.63f&&current<.9f)||(i==2&&current>=.9f))rb.setChecked(true);}box.addView(speeds);TextView voiceLabel=new TextView(this);voiceLabel.setText("Speaker voice");voiceLabel.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);voiceLabel.setPadding(0,dp(10),0,0);box.addView(voiceLabel);RadioGroup voices=new RadioGroup(this);ArrayList<Voice> av=voicesFor(lang);for(int i=0;i<4;i++){RadioButton rb=new RadioButton(this);rb.setId(600+i);rb.setText(i<av.size()?"Voice "+(i+1):"Voice "+(i+1)+" (not available)");rb.setEnabled(i<av.size());voices.addView(rb);if(i==sp.getInt("voice_type",0)&&i<av.size())rb.setChecked(true);}box.addView(voices);AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Voice setting — ")+lang).setView(box).setNegativeButton(tr("Close"),null).setPositiveButton(tr("Save"),null).create();d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int si=speeds.getCheckedRadioButtonId()-500;float rate=si==0?.5f:si==1?.75f:1f;int vi=voices.getCheckedRadioButtonId()-600;if(vi<0)vi=0;sp.edit().putFloat("voice_rate",rate).putInt("voice_type",vi).apply();applyVoiceSettings(lang);d.dismiss();});});d.show();}
  void styleMainButton(Button b){b.setBackgroundTintList(null);GradientDrawable g=new GradientDrawable();g.setColor(Color.rgb(214,196,77));g.setCornerRadius(dp(28));b.setBackground(g);b.setTextColor(Color.rgb(20,20,20));b.setAllCaps(false);}
@@ -270,9 +267,18 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   styleDialogButton(d,AlertDialog.BUTTON_NEGATIVE,bg,fg);
   styleDialogButton(d,AlertDialog.BUTTON_POSITIVE,bg,fg);
   styleDialogButton(d,AlertDialog.BUTTON_NEUTRAL,bg,fg);
+  // Keep Cancel / Close at the end of the action row, never between actions.
   Button negative=d.getButton(AlertDialog.BUTTON_NEGATIVE);
-  if(negative!=null){android.view.ViewGroup parent=(android.view.ViewGroup)negative.getParent();
-   if(parent instanceof LinearLayout){((LinearLayout)parent).setGravity(Gravity.START|Gravity.CENTER_VERTICAL);}}
+  if(negative!=null){String label=negative.getText().toString();
+   if(label.equalsIgnoreCase(tr("Close"))||label.equalsIgnoreCase(tr("Cancel"))){
+    android.view.ViewGroup parent=(android.view.ViewGroup)negative.getParent();
+    if(parent instanceof LinearLayout){LinearLayout bar=(LinearLayout)parent;
+     android.view.ViewGroup.LayoutParams params=negative.getLayoutParams();
+     bar.removeView(negative);bar.addView(negative,params);
+     bar.setGravity(Gravity.END|Gravity.CENTER_VERTICAL);
+    }
+   }
+  }
 
 }
  void styleDialogButton(AlertDialog d,int which,int bg,int fg){Button b=d.getButton(which);if(b!=null){b.setBackgroundTintList(null);b.setTextColor(fg);b.setAllCaps(false);GradientDrawable g=new GradientDrawable();g.setColor(bg);g.setCornerRadius(dp(12));b.setBackground(g);b.setPadding(dp(18),0,dp(18),0);LinearLayout.LayoutParams p=(LinearLayout.LayoutParams)b.getLayoutParams();p.setMargins(dp(5),dp(3),dp(5),dp(3));p.height=dp(43);b.setMinHeight(0);b.setMinimumHeight(0);b.setMinWidth(0);b.setScaleY(0.88f);b.setLayoutParams(p);attachHaptics(b);}}
@@ -372,7 +378,9 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  }
   void styleDrawerButtons(){
   Button[] buttons={drawerLanguage,drawerAddLanguage,drawerMainLanguage,drawerImport,drawerExport,drawerSettings,drawerBackupRestore,drawerReset,drawerMode,drawerVoice,drawerNotification,drawerPrivacy,drawerAbout,drawerClose,practiceDrawerButton};
-  for(Button b:buttons)if(b!=null){android.graphics.drawable.GradientDrawable shape=new android.graphics.drawable.GradientDrawable();shape.setColor(Color.rgb(125,155,199));shape.setCornerRadius(dp(16));b.setBackgroundTintList(null);b.setBackground(shape);b.setAllCaps(false);}
+  for(Button b:buttons)if(b!=null){android.graphics.drawable.GradientDrawable shape=new android.graphics.drawable.GradientDrawable();shape.setColor(Color.rgb(125,155,199));shape.setCornerRadius(dp(16));b.setBackgroundTintList(null);b.setBackground(shape);b.setAllCaps(false);
+   android.view.ViewGroup.LayoutParams raw=b.getLayoutParams();
+   if(raw instanceof android.view.ViewGroup.MarginLayoutParams){android.view.ViewGroup.MarginLayoutParams m=(android.view.ViewGroup.MarginLayoutParams)raw;m.topMargin=dp(b==drawerClose?18:5);m.bottomMargin=dp(5);b.setLayoutParams(m);}}
  }
  void closeMenu(){if(drawerOverlay.getVisibility()!=View.VISIBLE)return;drawerPanel.animate().translationX(-dp(300)).setDuration(180).withEndAction(()->drawerOverlay.setVisibility(View.GONE)).start();}
  void loadFilter(){filterFavorites=sp.getBoolean("filter_fav_"+lang,false);filterTag=sp.getString("filter_tag_"+lang,"");filterResult=sp.getString("filter_result_"+lang,"");filterBox=sp.getInt("filter_box_"+lang,0);}
@@ -427,7 +435,27 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  String appVersion(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "";}}
  void openPrivacyPolicy(){try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://omidrb.github.io/PhraseFlashCardsAndroid/privacy-policy.html")));}catch(Exception e){new AlertDialog.Builder(this).setTitle(tr("Privacy Policy")).setMessage("Open https://omidrb.github.io/PhraseFlashCardsAndroid/privacy-policy.html in your browser.").setPositiveButton(tr("OK"),null).show();}}
 
- void showAbout(){AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("About Zope Flash Cards")).setMessage("This is an experimental Android Flash card application for personal use. Created by ORB. Version "+appVersion()+"\n\nNative language: "+nativeLanguage()+"\nNative meaning field: "+nativeMeaningName()+"\n\nTip: long-press the active language name to change your native language.").setNeutralButton(tr("Algorithm"),(q,w)->showAlgorithm()).setPositiveButton(tr("OK"),null).create();showStyled(d);}
+ void showAbout(){AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("About Zope Flash Cards"))
+  .setMessage("This is an experimental Android Flash card application for personal use. Created by ORB. Version "+appVersion()+"\n\nNative language: "+nativeLanguage()+"\nNative meaning field: "+nativeMeaningName()+"\n\nTip: long-press the active language name to change your native language.")
+  .setNeutralButton(tr("Algorithm"),(q,w)->showAlgorithm())
+  .setPositiveButton(tr("Updates"),(q,w)->showUpdates())
+  .setNegativeButton(tr("Close"),null).create();showStyled(d);}
+ void showUpdates(){
+  String changes="Zope Flash Cards v"+appVersion()+"\n\n"+
+   "• Added spacing between main-menu and Settings buttons.\n"+
+   "• Close and Cancel appear last in dialog action rows.\n"+
+   "• Card swiping now uses a smoother horizontal exit-and-enter animation.\n"+
+   "• Added this Updates screen to About.\n\n"+
+   "Major improvements introduced in v11.0:\n"+
+   "• Rename or delete a selected card library.\n"+
+   "• Option to practice only filtered cards.\n"+
+   "• CSV import choices for existing libraries.\n"+
+   "• Main-page language refresh and additional translations.\n"+
+   "• More rounded menu buttons.";
+  AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Updates"))
+   .setMessage(changes).setPositiveButton(tr("Close"),null).create();showStyled(d);
+ }
+
  void showAlgorithm(){String m="Daily Practice selects up to 10 cards from the active language and current filters.\n\nPriority: cards marked Hard on the previous day are selected first. Remaining places are filled from eligible cards in randomized order.\n\nGood: moves the card one Leitner box higher, up to Box 5, and schedules a longer review interval.\n\nHard: returns the card to Box 1 and marks it for priority in the next day's practice.\n\nThe current Favorites, Tag, Good/Hard and Box filters also control which cards are eligible for Daily Practice. You must rate a shown card before normal practice advances.";AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Daily Practice Algorithm")).setMessage(m).setPositiveButton(tr("OK"),null).create();showStyled(d);}
  void viewByBox(){String[]b=new String[5];for(int k=1;k<=5;k++){int n=0;for(Card c:cards)if(c.lang.equals(lang)&&box(c)==k)n++;b[k-1]="Box "+k+"  ("+n+" cards)";}AlertDialog dlg=new AlertDialog.Builder(this).setTitle(tr("Leitner Boxes — ")+lang).setItems(b,(d,w)->{query="";search.setText("");renderLibrary();for(int i=0;i<cardGrid.getChildCount();i++){View v=cardGrid.getChildAt(i);v.setVisibility(View.VISIBLE);}Toast.makeText(this,"Box "+(w+1)+": tap cards to edit their box",Toast.LENGTH_LONG).show();}).create();showStyled(dlg);}
  void resetLeitner(){AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Reset Leitner progress?")).setMessage("This resets all "+lang+" cards to Box 1 and clears Good/Hard status.").setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Reset"),(dialog,w)->{SharedPreferences.Editor ed=sp.edit();for(Card c:cards)if(c.lang.equals(lang)){ed.remove(c.id+"_box");ed.remove(c.id+"_due");ed.remove(c.id+"_result");}ed.apply();renderLibrary();}).create();showStyled(d);}
