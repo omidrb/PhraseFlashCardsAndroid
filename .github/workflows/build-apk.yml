@@ -27,13 +27,24 @@ jobs:
          exit 1
        fi
        echo "AAB exists: $(ls -lh "$AAB")"
-       echo "Expected app versionCode: 59"
+       echo "Expected app versionCode: 60"
        echo "Expected applicationId: com.zopelab.zopeflashcards"
-       grep -qE 'versionCode[[:space:]]+59([;[:space:]]|$)' app/build.gradle || { echo "ERROR: Gradle versionCode is not 60"; exit 1; }
+       grep -qE 'versionCode[[:space:]]+60([;[:space:]]|$)' app/build.gradle || { echo "ERROR: Gradle versionCode is not 60"; exit 1; }
        grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle || { echo "ERROR: Unexpected applicationId"; exit 1; }
        echo "AAB presence and Gradle configuration verified. Play Console will validate the uploaded bundle."
    - name: Build debug APK for phone testing
      run: gradle assembleDebug --stacktrace
+   - name: Verify generated debug APK
+     run: |
+       echo "Debug APK output directory:"
+       ls -lah app/build/outputs/apk/debug/ || true
+       APK=app/build/outputs/apk/debug/app-debug.apk
+       if [ ! -s "$APK" ]; then
+         echo "ERROR: Missing or empty $APK after assembleDebug"
+         find app/build/outputs -type f -name '*.apk' -print || true
+         exit 1
+       fi
+       echo "Debug APK ready: $(ls -lh "$APK")"
    - name: Upload debug APK
      uses: actions/upload-artifact@v4
      with:

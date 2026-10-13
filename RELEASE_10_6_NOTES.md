@@ -1,0 +1,1 @@
+v10.6 code55: corrected localized library terminology and Language menu; localized statistics, filters, daily-practice exit and summary; replaced Android stock star icons with transparent borderless star drawing. Remaining dialog/message audit and on-device tests required.
