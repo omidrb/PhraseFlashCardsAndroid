@@ -349,6 +349,10 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   LinearLayout box=new LinearLayout(this);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(24),dp(12),dp(24),dp(8));
   TextView label=new TextView(this);label.setText(tr("Daily Practice cards (5–100)"));label.setTextSize(16);box.addView(label);
   EditText input=new EditText(this);input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);input.setSingleLine(true);input.setText(String.valueOf(sp.getInt("daily_card_limit",10)));box.addView(input,new LinearLayout.LayoutParams(-1,dp(55)));
+  CheckBox filteredOnly=new CheckBox(this);
+  filteredOnly.setText(tr("Practice only within the filtered cards"));
+  filteredOnly.setChecked(sp.getBoolean("practice_filtered_only",false));
+  box.addView(filteredOnly,new LinearLayout.LayoutParams(-1,-2));
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Practice settings")).setView(box).setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Save"),null).create();
   d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(w->{try{int count=Integer.parseInt(input.getText().toString().trim());if(count<5||count>100){input.setError(tr("Enter a number from 5 to 100"));return;}sp.edit().putInt("daily_card_limit",count).putBoolean("practice_filtered_only",filteredOnly.isChecked()).apply();d.dismiss();}catch(NumberFormatException e){input.setError(tr("Enter a number from 5 to 100"));}});});d.show();
  }
