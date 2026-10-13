@@ -143,3 +143,15 @@ This v10.1 source uses **versionCode 49** (48 was present in the previous source
 
 ## Experimental v10.2 source changes
 This is a partial, uncompiled update, versionCode 51. Server import dialog uses a scrollable rounded collection list with language-first headings; import source chooser is styled and no longer says GitHub; native language selection is alphabetized; CSV header mismatches in server imports suppress native translations. Full UI localization, local CSV mismatch validation, and swipe navigation are not yet implemented. Do not publish without completing and testing those requirements.
+
+## v11.0 (versionCode 59) — Development source
+
+- Switch Library includes Rename and Delete actions for a selected library, with deletion confirmation. The built-in English library is protected.
+- Practice Settings includes a persistent **Practice only within the filtered cards** checkbox. When disabled, Daily Practice considers the full active library; when enabled, it uses the active filters.
+- Card details use a short horizontal swipe exit animation before displaying the adjacent card.
+- CSV imports now offer a destination choice if the target library already exists: **New library**, **Add to the library**, or **Cancel**.
+- Main-page labels and statistics are refreshed after changing the native language.
+- Additional translations for v11.0 actions are included in Persian, Norwegian, Arabic, German, French, Spanish, Italian, Urdu, Hebrew, Turkish and Polish.
+- Sliding drawer buttons have more rounded corners. Dialog button alignment styling was adjusted.
+
+**Validation status:** Source package only. A full Android build, release signing validation, and device testing have not been completed. Some existing legacy messages may still need localization audit. APK and AAB must be generated and verified using the GitHub Actions workflow before distribution.
