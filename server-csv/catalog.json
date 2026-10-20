@@ -5,6 +5,7 @@
       "file": "English_200.csv",
       "title": "Learning 200 English Phrases with Persian translation",
       "language": "English",
+      "Translation":"Persian",
       "description": "",
       "Library":"EN-PR"
     },
@@ -12,6 +13,7 @@
       "file": "Norwegian_300.csv",
       "title": "Learning 300 Norwegian phrases with Persian translation",
       "language": "Norwegian",
+      "Translation":"Persian",
       "description": "",
       "Library":"NO-PR"
     },
@@ -19,6 +21,7 @@
       "file": "German_200.csv",
       "title": "Learning 200 German phrases with English translation",
       "language": "German",
+      "Translation":"English",
       "description": "",
       "Library":"GM-EN"
     },
@@ -26,6 +29,7 @@
       "file": "English_German_200.csv",
       "title": "Learning 200 English phrases with German translation",
       "language": "English",
+      "Translation":"German",
       "description": "",
       "Library":"EN-GM"
     }
