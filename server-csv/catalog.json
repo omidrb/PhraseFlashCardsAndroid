@@ -4,25 +4,25 @@
     {
       "file": "English_200.csv",
       "title": "200 English->Persian Phrases",
-      "language": "English",
+      "language": "English-Persian",
       "description": ""
     },
     {
       "file": "Norwegian_300.csv",
       "title": "300 Norwegian->Persian Phrases",
-      "language": "Norwegian",
+      "language": "Norwegian-Persian",
       "description": ""
     },
     {
       "file": "German_200.csv",
       "title": "200 German->English Phrases",
-      "language": "German",
+      "language": "German-English",
       "description": ""
     },
     {
       "file": "English_German_200.csv",
       "title": "200 English->German Phrases",
-      "language": "German",
+      "language": "English-German",
       "description": ""
     }
   ]
