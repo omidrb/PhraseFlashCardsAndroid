@@ -5,25 +5,29 @@
       "file": "English_200.csv",
       "title": "200 English->Persian Phrases",
       "language": "English",
-      "description": ""
+      "description": "",
+      "Library":"EN-PR"
     },
     {
       "file": "Norwegian_300.csv",
       "title": "300 Norwegian->Persian Phrases",
       "language": "Norwegian",
-      "description": ""
+      "description": "",
+      "Library":"NO-PR"
     },
     {
       "file": "German_200.csv",
       "title": "200 German->English Phrases",
       "language": "German",
-      "description": ""
+      "description": "",
+      "Library":"GM-EN"
     },
     {
       "file": "English_German_200.csv",
       "title": "200 English->German Phrases",
       "language": "English",
-      "description": ""
+      "description": "",
+      "Library":"EN-GM"
     }
   ]
 }
