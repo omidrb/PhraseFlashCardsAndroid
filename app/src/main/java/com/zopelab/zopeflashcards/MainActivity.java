@@ -5,17 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;import android.speech.tts.TextTo
 public class MainActivity extends AppCompatActivity{
  static class Card{String id,lang,p,en,fa,n,e;Card(String a,String b,String c,String d,String f,String g,String h){id=a;lang=b;p=c;en=d;fa=f;n=g;e=h;}}
  ArrayList<Card>cards=new ArrayList<>(),dailyCards=new ArrayList<>();ArrayList<String>decks=new ArrayList<>();HashSet<String>selected=new HashSet<>();
- SharedPreferences sp;Card cur;String lang="English",query="";int dailyIndex=0,dailyGood=0,dailyHard=0;boolean dailyMode=false,dark=false;final HashSet<String> ratedToday=new HashSet<>();float swipeStartX,swipeStartY;float practiceDownX,practiceDownY;boolean practiceSwipeCandidate=false;boolean filterFavorites=false;String filterTag="",filterResult="";int filterBox=0;
+ SharedPreferences sp;Card cur;String lang="Default",query="";int dailyIndex=0,dailyGood=0,dailyHard=0;boolean dailyMode=false,dark=false;final HashSet<String> ratedToday=new HashSet<>();float swipeStartX,swipeStartY;float practiceDownX,practiceDownY;boolean practiceSwipeCandidate=false;boolean filterFavorites=false;String filterTag="",filterResult="";int filterBox=0;
  LinearLayout libraryView,practiceView,answerBox,rating,studyArea,selectionBar;GridLayout cardGrid;
- TextView title,currentLanguage,cardCount,stats,goodStats,hardStats,selectedCount,practiceProgress,phrase,enMeaning,faMeaning,example,nativeMeaningLabel; View splash;
+ TextView title,currentLanguage,cardCount,stats,goodStats,hardStats,selectedCount,practiceProgress,phrase,enMeaning,faMeaning,example,nativeMeaningLabel,englishMeaningLabel; View splash;
  EditText search;ImageButton filterButton;View goodBar,hardBar,unseenBar,drawerOverlay,drawerPanel;Button menuButton,daily,add,show,hard,good,backLibrary,selectAll,deleteSelected,moveSelected,cancelSelection,drawerLanguage,drawerAddLanguage,drawerMainLanguage,drawerImport,drawerExport,drawerReset,drawerMode,drawerVoice,drawerNotification,drawerBackupRestore,drawerPrivacy,drawerAbout,drawerClose,drawerSettings; ImageButton practiceListen,practiceFavorite;
  ImageButton activeSpeaker=null;android.view.animation.Animation speakerAnimation;
  static final int EXPORT_CSV=401,IMPORT_CSV=402,EXPORT_BACKUP=403,IMPORT_BACKUP=404; TextToSpeech tts;boolean ttsReady=false;
 
- public void onCreate(Bundle b){sp=getSharedPreferences("zope_flashcards_v81",MODE_PRIVATE);applyTheme();super.onCreate(b);setContentView(R.layout.activity_main);bind();title.setText("Zope Flash Cards v"+appVersion());cleanDatabaseOnce();loadSeed();loadCustom();loadDecks();lang=sp.getString("active_language","English");if(!decks.contains(lang))lang="English";loadFilter();dark=isDark();styleTheme();applyNativeMeaningUi();localizeMainUi();findViewById(R.id.mainBottomBar).setBackgroundColor(Color.TRANSPARENT);styleMainButton(add);styleMainButton(daily);wire();installDailySwipe();enableButtonHaptics();initTts();renderLibrary();NotificationScheduler.ensureScheduled(this);handleNotificationIntent(getIntent());splash=findViewById(R.id.splash);splash.postDelayed(()->splash.setVisibility(View.GONE),550);if(!sp.getBoolean("native_language_selected",false))new Handler(Looper.getMainLooper()).postDelayed(()->showNativeLanguageDialog(true),650);}
+ public void onCreate(Bundle b){sp=getSharedPreferences("zope_flashcards_v81",MODE_PRIVATE);applyTheme();super.onCreate(b);setContentView(R.layout.activity_main);bind();title.setText("Zope Flash Cards v"+appVersion());cleanDatabaseOnce();loadSeed();loadCustom();migrateLegacyDefaultLibrary();loadDecks();lang=sp.getString("active_language","Default");if(!decks.contains(lang))lang="Default";loadFilter();dark=isDark();styleTheme();applyNativeMeaningUi();localizeMainUi();findViewById(R.id.mainBottomBar).setBackgroundColor(Color.TRANSPARENT);styleMainButton(add);styleMainButton(daily);wire();installDailySwipe();enableButtonHaptics();initTts();renderLibrary();NotificationScheduler.ensureScheduled(this);handleNotificationIntent(getIntent());splash=findViewById(R.id.splash);splash.postDelayed(()->splash.setVisibility(View.GONE),550);if(!sp.getBoolean("native_language_selected",false))new Handler(Looper.getMainLooper()).postDelayed(()->showNativeLanguageDialog(true),650);}
  void applyTheme(){String t=sp.getString("theme","system");int m=t.equals("dark")?AppCompatDelegate.MODE_NIGHT_YES:t.equals("light")?AppCompatDelegate.MODE_NIGHT_NO:AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;if(AppCompatDelegate.getDefaultNightMode()!=m)AppCompatDelegate.setDefaultNightMode(m);}
  boolean isDark(){return (getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;}
- void bind(){libraryView=findViewById(R.id.libraryView);practiceView=findViewById(R.id.practiceView);answerBox=findViewById(R.id.answerBox);rating=findViewById(R.id.rating);studyArea=findViewById(R.id.studyArea);selectionBar=findViewById(R.id.selectionBar);cardGrid=findViewById(R.id.cardGrid);title=findViewById(R.id.title);currentLanguage=findViewById(R.id.currentLanguage);cardCount=findViewById(R.id.cardCount);stats=findViewById(R.id.stats);goodStats=findViewById(R.id.goodStats);hardStats=findViewById(R.id.hardStats);selectedCount=findViewById(R.id.selectedCount);practiceProgress=findViewById(R.id.practiceProgress);phrase=findViewById(R.id.phrase);enMeaning=findViewById(R.id.meaningEnglish);faMeaning=findViewById(R.id.meaningPersian);nativeMeaningLabel=findViewById(R.id.nativeMeaningLabel);example=findViewById(R.id.example);search=findViewById(R.id.search);filterButton=findViewById(R.id.filterButton);goodBar=findViewById(R.id.goodProgress);hardBar=findViewById(R.id.hardProgress);unseenBar=findViewById(R.id.unseenProgress);menuButton=findViewById(R.id.menuButton);daily=findViewById(R.id.daily);add=findViewById(R.id.add);show=findViewById(R.id.show);hard=findViewById(R.id.hard);good=findViewById(R.id.good);backLibrary=findViewById(R.id.backLibrary);deleteSelected=findViewById(R.id.deleteSelected);selectAll=findViewById(R.id.selectAll);moveSelected=findViewById(R.id.moveSelected);cancelSelection=findViewById(R.id.cancelSelection);practiceListen=findViewById(R.id.practiceListen);practiceFavorite=findViewById(R.id.practiceFavorite);drawerOverlay=findViewById(R.id.drawerOverlay);drawerPanel=findViewById(R.id.drawerPanel);drawerLanguage=findViewById(R.id.drawerLanguage);drawerAddLanguage=findViewById(R.id.drawerAddLanguage);drawerMainLanguage=findViewById(R.id.drawerMainLanguage);drawerImport=findViewById(R.id.drawerImport);drawerExport=findViewById(R.id.drawerExport);drawerReset=findViewById(R.id.drawerReset);drawerMode=findViewById(R.id.drawerMode);drawerVoice=findViewById(R.id.drawerVoice);drawerNotification=findViewById(R.id.drawerNotification);drawerBackupRestore=findViewById(R.id.drawerBackupRestore);drawerPrivacy=findViewById(R.id.drawerPrivacy);drawerAbout=findViewById(R.id.drawerAbout);drawerClose=findViewById(R.id.drawerClose);drawerSettings=findViewById(R.id.drawerSettings);}
+ void bind(){libraryView=findViewById(R.id.libraryView);practiceView=findViewById(R.id.practiceView);answerBox=findViewById(R.id.answerBox);rating=findViewById(R.id.rating);studyArea=findViewById(R.id.studyArea);selectionBar=findViewById(R.id.selectionBar);cardGrid=findViewById(R.id.cardGrid);title=findViewById(R.id.title);currentLanguage=findViewById(R.id.currentLanguage);cardCount=findViewById(R.id.cardCount);stats=findViewById(R.id.stats);goodStats=findViewById(R.id.goodStats);hardStats=findViewById(R.id.hardStats);selectedCount=findViewById(R.id.selectedCount);practiceProgress=findViewById(R.id.practiceProgress);phrase=findViewById(R.id.phrase);enMeaning=findViewById(R.id.meaningEnglish);englishMeaningLabel=findViewById(R.id.meaningEnglishLabel);faMeaning=findViewById(R.id.meaningPersian);nativeMeaningLabel=findViewById(R.id.nativeMeaningLabel);example=findViewById(R.id.example);search=findViewById(R.id.search);filterButton=findViewById(R.id.filterButton);goodBar=findViewById(R.id.goodProgress);hardBar=findViewById(R.id.hardProgress);unseenBar=findViewById(R.id.unseenProgress);menuButton=findViewById(R.id.menuButton);daily=findViewById(R.id.daily);add=findViewById(R.id.add);show=findViewById(R.id.show);hard=findViewById(R.id.hard);good=findViewById(R.id.good);backLibrary=findViewById(R.id.backLibrary);deleteSelected=findViewById(R.id.deleteSelected);selectAll=findViewById(R.id.selectAll);moveSelected=findViewById(R.id.moveSelected);cancelSelection=findViewById(R.id.cancelSelection);practiceListen=findViewById(R.id.practiceListen);practiceFavorite=findViewById(R.id.practiceFavorite);drawerOverlay=findViewById(R.id.drawerOverlay);drawerPanel=findViewById(R.id.drawerPanel);drawerLanguage=findViewById(R.id.drawerLanguage);drawerAddLanguage=findViewById(R.id.drawerAddLanguage);drawerMainLanguage=findViewById(R.id.drawerMainLanguage);drawerImport=findViewById(R.id.drawerImport);drawerExport=findViewById(R.id.drawerExport);drawerReset=findViewById(R.id.drawerReset);drawerMode=findViewById(R.id.drawerMode);drawerVoice=findViewById(R.id.drawerVoice);drawerNotification=findViewById(R.id.drawerNotification);drawerBackupRestore=findViewById(R.id.drawerBackupRestore);drawerPrivacy=findViewById(R.id.drawerPrivacy);drawerAbout=findViewById(R.id.drawerAbout);drawerClose=findViewById(R.id.drawerClose);drawerSettings=findViewById(R.id.drawerSettings);}
  void enableButtonHaptics(){
   View root=findViewById(R.id.root);
   if(root!=null)attachHaptics(root);
@@ -174,8 +174,19 @@ TRANSLATIONS.put("Polish",new String[]{"Menu","Dodaj kartę","Codzienna nauka","
  void loadSeed(){try{InputStream in=getAssets().open("seed_cards.json");ByteArrayOutputStream out=new ByteArrayOutputStream();byte[]buf=new byte[8192];int n;while((n=in.read(buf))!=-1)out.write(buf,0,n);in.close();JSONArray a=new JSONArray(out.toString("UTF-8"));for(int i=0;i<a.length();i++){JSONObject o=a.getJSONObject(i);String id=o.getString("id");if(sp.getBoolean(id+"_deleted",false))continue;String raw=o.optString("tr"),en="",fa="";if(hasPersian(raw))fa=raw;else en=raw;cards.add(new Card(id,o.getString("lang"),o.getString("phrase"),en,fa,o.optString("note"),o.optString("ex")));}}catch(Exception e){e.printStackTrace();}}
  void loadCustom(){try{JSONArray a=new JSONArray(sp.getString("customCards","[]"));for(int i=0;i<a.length();i++){JSONObject o=a.getJSONObject(i);cards.add(new Card(o.getString("id"),o.getString("lang"),o.getString("p"),o.optString("en"),o.optString("fa"),o.optString("n"),o.optString("e")));}}catch(Exception ignored){}}
  void saveCustom(){JSONArray a=new JSONArray();try{for(Card c:cards)if(c.id.startsWith("c")){JSONObject o=new JSONObject();o.put("id",c.id);o.put("lang",c.lang);o.put("p",c.p);o.put("en",c.en);o.put("fa",c.fa);o.put("n",c.n);o.put("e",c.e);a.put(o);}}catch(Exception ignored){}sp.edit().putString("customCards",a.toString()).apply();}
- void loadDecks(){decks.clear();decks.add("English");try{JSONArray a=new JSONArray(sp.getString("decks","[]"));for(int i=0;i<a.length();i++){String d=a.getString(i);if(!decks.contains(d))decks.add(d);}}catch(Exception ignored){}for(Card c:cards)if(c.lang!=null&&!c.lang.trim().isEmpty()&&!decks.contains(c.lang))decks.add(c.lang);}
- void saveDecks(){JSONArray a=new JSONArray();for(String d:decks)if(!d.equals("English"))a.put(d);sp.edit().putString("decks",a.toString()).apply();}
+ void migrateLegacyDefaultLibrary(){
+  // Built-in seed cards are loaded afresh on every launch, so normalize them each time.
+  for(Card c:cards)if(!c.id.startsWith("c")&&"English".equals(c.lang))c.lang="Default";
+  if(sp.getBoolean("default_library_migrated_v11",false))return;
+  for(Card c:cards)if(c.id.startsWith("c")&&"English".equals(c.lang))c.lang="Default";
+  try{JSONArray old=new JSONArray(sp.getString("decks","[]"));JSONArray migrated=new JSONArray();for(int i=0;i<old.length();i++){String name=old.getString(i);if(name.equals("English"))name="Default";if(!containsJsonString(migrated,name))migrated.put(name);}sp.edit().putString("decks",migrated.toString()).apply();}catch(Exception ignored){}
+  if("English".equals(sp.getString("active_language","")))sp.edit().putString("active_language","Default").apply();
+  saveCustom();
+  sp.edit().putBoolean("default_library_migrated_v11",true).apply();
+ }
+ boolean containsJsonString(JSONArray a,String value){for(int i=0;i<a.length();i++)if(value.equals(a.optString(i)))return true;return false;}
+ void loadDecks(){decks.clear();decks.add("Default");try{JSONArray a=new JSONArray(sp.getString("decks","[]"));for(int i=0;i<a.length();i++){String d=a.getString(i);if(!decks.contains(d))decks.add(d);}}catch(Exception ignored){}for(Card c:cards)if(c.lang!=null&&!c.lang.trim().isEmpty()&&!decks.contains(c.lang))decks.add(c.lang);}
+ void saveDecks(){JSONArray a=new JSONArray();for(String d:decks)if(!d.equals("Default"))a.put(d);sp.edit().putString("decks",a.toString()).apply();}
  int box(Card c){return sp.getInt(c.id+"_box",1);}int result(Card c){return sp.getInt(c.id+"_result",0);}long interval(int b){long d=86400000L;return b<=1?0:b==2?d:b==3?3*d:b==4?7*d:14*d;}
  boolean favorite(Card c){return sp.getBoolean(c.id+"_favorite",false);} boolean matchesFilter(Card c){if(filterFavorites&&!favorite(c))return false;if(!filterTag.isEmpty()&&!c.n.trim().equalsIgnoreCase(filterTag.trim()))return false;if(filterResult.equals("Good")&&result(c)!=1)return false;if(filterResult.equals("Hard")&&result(c)!=-1)return false;if(filterBox>0&&box(c)!=filterBox)return false;return true;}
  ArrayList<Card>active(){ArrayList<Card>a=new ArrayList<>();for(Card c:cards)if(c.lang.equals(lang)&&matchesFilter(c))a.add(c);Collections.sort(a,(a1,a2)->Boolean.compare(favorite(a2),favorite(a1)));return a;}
@@ -212,7 +223,12 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  }
  int dp(int n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
  void cardActions(Card c,int number){showCardDialog(c);}
- String visibleNative(Card c){String header=sp.getString(c.id+"_translation_header","");return header.isEmpty()||translationCompatible(header,c.fa)?c.fa:"";}
+ String cardTranslationLanguage(Card c){return sp.getString(c.id+"_translation_language","").trim();}
+ String cardSpeechLanguage(Card c){String configured=sp.getString(c.id+"_speech_language","").trim();if(!configured.isEmpty())return configured;return c.lang.equals("Default")?"English":c.lang;}
+ String meaningTitleForLanguage(String language){String l=language==null?"":language.trim().toLowerCase(Locale.ROOT);switch(l){case "german":return "Deutsche Bedeutung";case "norwegian":case "norsk":return "Norsk betydning";case "persian":case "farsi":return "معنی فارسی";case "french":return "Signification française";case "spanish":return "Significado en español";case "italian":return "Significato italiano";case "arabic":return "المعنى بالعربية";case "urdu":return "اردو معنی";case "hebrew":return "משמעות בעברית";case "turkish":return "Türkçe anlamı";case "polish":return "Polskie znaczenie";case "english":return "English Meaning";default:return language+" Meaning";}}
+ String meaningTitleForCard(Card c){String translation=cardTranslationLanguage(c);return translation.isEmpty()?localizedNativeMeaningName():meaningTitleForLanguage(translation);}
+ boolean translationIsRtl(String language){String l=language==null?"":language.toLowerCase(Locale.ROOT);return l.equals("persian")||l.equals("arabic")||l.equals("urdu")||l.equals("hebrew")||l.equals("farsi");}
+ String visibleNative(Card c){if(!cardTranslationLanguage(c).isEmpty())return c.fa;String header=sp.getString(c.id+"_translation_header","");return header.isEmpty()||translationCompatible(header,c.fa)?c.fa:"";}
  void showCardDialog(Card c){if(search!=null){search.clearFocus();android.view.inputmethod.InputMethodManager im=(android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);if(im!=null)im.hideSoftInputFromWindow(search.getWindowToken(),0);}
   final Dialog dlg=new Dialog(this);
   ScrollView scroll=new ScrollView(this){float downX,downY;@Override public boolean dispatchTouchEvent(MotionEvent event){if(event.getActionMasked()==MotionEvent.ACTION_DOWN){downX=event.getX();downY=event.getY();}if(event.getActionMasked()==MotionEvent.ACTION_UP){float dx=event.getX()-downX,dy=event.getY()-downY;if(Math.abs(dx)>dp(85)&&Math.abs(dx)>Math.abs(dy)*1.5f){ArrayList<Card> filtered=active();int index=-1;for(int i=0;i<filtered.size();i++)if(filtered.get(i).id.equals(c.id)){index=i;break;}int target=index+(dx<0?1:-1);if(index>=0&&target>=0&&target<filtered.size()){scrollSwipeNext(dlg,filtered.get(target),dx<0);return true;}}}return super.dispatchTouchEvent(event);}};scroll.setFillViewport(true);scroll.setPadding(0,0,0,0);
@@ -226,7 +242,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   LinearLayout.LayoutParams quickP=new LinearLayout.LayoutParams(-1,-2);quickP.setMargins(0,0,0,dp(16));wrap.addView(quickActions,quickP);
 
   addDetailSection(wrap,"English Meaning",blank(c.en),false);
-  addDetailSection(wrap,localizedNativeMeaningName(),blank(visibleNative(c)),nativeRtl());
+  addDetailSection(wrap,meaningTitleForCard(c),blank(visibleNative(c)),cardTranslationLanguage(c).isEmpty()?nativeRtl():translationIsRtl(cardTranslationLanguage(c)));
   addDetailSection(wrap,tr("Example"),blank(c.e),false);addDetailSection(wrap,tr("Tag"),blank(c.n),false);
 
   LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setGravity(Gravity.CENTER);
@@ -255,11 +271,11 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  }
 
  void initTts(){tts=new TextToSpeech(this,status->{ttsReady=status==TextToSpeech.SUCCESS;if(ttsReady)tts.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener(){public void onStart(String id){}public void onDone(String id){runOnUiThread(()->stopSpeakerAnimation());}public void onError(String id){runOnUiThread(()->stopSpeakerAnimation());}public void onStop(String id,boolean interrupted){runOnUiThread(()->stopSpeakerAnimation());}});});}
- Locale localeForLanguage(String l){String x=l==null?"":l.toLowerCase(Locale.ROOT);if(x.contains("norwegian")||x.contains("norsk"))return new Locale("nb","NO");if(x.contains("german"))return Locale.GERMAN;if(x.contains("french"))return Locale.FRENCH;if(x.contains("spanish"))return new Locale("es","ES");if(x.contains("italian"))return Locale.ITALIAN;if(x.contains("persian")||x.contains("farsi")||x.contains("فارسی"))return new Locale("fa","IR");return Locale.ENGLISH;}
+ Locale localeForLanguage(String l){String x=l==null?"":l.trim().toLowerCase(Locale.ROOT);if(x.contains("norwegian")||x.contains("norsk"))return new Locale("nb","NO");if(x.contains("german")||x.equals("de"))return Locale.GERMAN;if(x.contains("french")||x.equals("fr"))return Locale.FRENCH;if(x.contains("spanish")||x.equals("es"))return new Locale("es","ES");if(x.contains("italian")||x.equals("it"))return Locale.ITALIAN;if(x.contains("persian")||x.contains("farsi")||x.contains("فارسی"))return new Locale("fa","IR");if(x.contains("arabic")||x.equals("ar"))return new Locale("ar","SA");if(x.contains("urdu")||x.equals("ur"))return new Locale("ur","PK");if(x.contains("hebrew")||x.equals("he"))return new Locale("he","IL");if(x.contains("turkish")||x.equals("tr"))return new Locale("tr","TR");if(x.contains("polish")||x.equals("pl"))return new Locale("pl","PL");return Locale.ENGLISH;}
  void startSpeakerAnimation(ImageButton b){stopSpeakerAnimation();if(b==null)return;activeSpeaker=b;android.view.animation.ScaleAnimation a=new android.view.animation.ScaleAnimation(1f,1.16f,1f,1.16f,android.view.animation.Animation.RELATIVE_TO_SELF,.5f,android.view.animation.Animation.RELATIVE_TO_SELF,.5f);a.setDuration(280);a.setRepeatMode(android.view.animation.Animation.REVERSE);a.setRepeatCount(android.view.animation.Animation.INFINITE);speakerAnimation=a;b.startAnimation(a);}
  void stopSpeakerAnimation(){if(activeSpeaker!=null){activeSpeaker.clearAnimation();activeSpeaker=null;}speakerAnimation=null;}
  void speakPhrase(Card c){speakPhrase(c,null);}
- void speakPhrase(Card c,ImageButton source){if(!ttsReady||tts==null){Toast.makeText(this,"Speech engine is not ready yet.",Toast.LENGTH_SHORT).show();return;}int r=tts.setLanguage(localeForLanguage(c.lang));if(r==TextToSpeech.LANG_MISSING_DATA||r==TextToSpeech.LANG_NOT_SUPPORTED){Toast.makeText(this,"Speech for "+c.lang+" is not installed.",Toast.LENGTH_LONG).show();return;}applyVoiceSettings(c.lang);startSpeakerAnimation(source);tts.speak(c.p,TextToSpeech.QUEUE_FLUSH,null,"phrase_"+c.id);}
+ void speakPhrase(Card c,ImageButton source){if(!ttsReady||tts==null){Toast.makeText(this,"Speech engine is not ready yet.",Toast.LENGTH_SHORT).show();return;}String speechLanguage=cardSpeechLanguage(c);int r=tts.setLanguage(localeForLanguage(speechLanguage));if(r==TextToSpeech.LANG_MISSING_DATA||r==TextToSpeech.LANG_NOT_SUPPORTED){Toast.makeText(this,"Speech for "+speechLanguage+" is not installed.",Toast.LENGTH_LONG).show();return;}applyVoiceSettings(speechLanguage);startSpeakerAnimation(source);tts.speak(c.p,TextToSpeech.QUEUE_FLUSH,null,"phrase_"+c.id);}
 
  void applyVoiceSettings(String language){if(tts==null)return;float rate=sp.getFloat("voice_rate",1.0f);tts.setSpeechRate(rate);try{ArrayList<Voice> vs=voicesFor(language);int idx=Math.max(0,Math.min(3,sp.getInt("voice_type",0)));if(!vs.isEmpty())tts.setVoice(vs.get(Math.min(idx,vs.size()-1)));}catch(Exception ignored){}}
  ArrayList<Voice> voicesFor(String language){ArrayList<Voice> out=new ArrayList<>();if(tts==null||tts.getVoices()==null)return out;Locale target=localeForLanguage(language);for(Voice v:tts.getVoices()){Locale l=v.getLocale();if(l!=null&&l.getLanguage().equals(target.getLanguage())&&!v.isNetworkConnectionRequired())out.add(v);}if(out.size()<4)for(Voice v:tts.getVoices()){Locale l=v.getLocale();if(l!=null&&l.getLanguage().equals(target.getLanguage())&&!out.contains(v))out.add(v);}Collections.sort(out,(a,b)->a.getName().compareToIgnoreCase(b.getName()));return out;}
@@ -415,7 +431,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   });d.show();
  }
  void renameLibrary(String old){
-  if(old.equals("English")){Toast.makeText(this,tr("Default library cannot be renamed"),Toast.LENGTH_LONG).show();return;}
+  if(old.equals("Default")){Toast.makeText(this,tr("Default library cannot be renamed"),Toast.LENGTH_LONG).show();return;}
   EditText input=new EditText(this);input.setSingleLine(true);input.setText(old);input.selectAll();
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Rename library")).setView(input)
    .setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Save"),null).create();
@@ -428,12 +444,12 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   });});d.show();
  }
  void deleteLibrary(String name){
-  if(name.equals("English")){Toast.makeText(this,tr("Default library cannot be deleted"),Toast.LENGTH_LONG).show();return;}
+  if(name.equals("Default")){Toast.makeText(this,tr("Default library cannot be deleted"),Toast.LENGTH_LONG).show();return;}
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Delete library?")).setMessage(name+" — "+tr("All cards in this library will be deleted."))
    .setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Delete"),(q,w)->{
     for(Card card:new ArrayList<Card>(cards))if(card.lang.equals(name)){sp.edit().putBoolean(card.id+"_deleted",true).apply();cards.remove(card);}
     decks.remove(name);saveDecks();saveCustom();selected.clear();
-    if(lang.equals(name)){lang="English";sp.edit().putString("active_language",lang).apply();}
+    if(lang.equals(name)){lang="Default";sp.edit().putString("active_language",lang).apply();}
     loadFilter();localizeMainUi();renderLibrary();
    }).create();showStyled(d);
  }
@@ -450,16 +466,15 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   .setNegativeButton(tr("Close"),null).create();showStyled(d);}
  void showUpdates(){
   String changes="Zope Flash Cards v"+appVersion()+"\n\n"+
-   "• Added spacing between main-menu and Settings buttons.\n"+
-   "• Close and Cancel appear last in dialog action rows.\n"+
-   "• Card swiping now uses a smoother horizontal exit-and-enter animation.\n"+
-   "• Added this Updates screen to About.\n\n"+
-   "Major improvements introduced in v11.0:\n"+
-   "• Rename or delete a selected card library.\n"+
-   "• Option to practice only filtered cards.\n"+
-   "• CSV import choices for existing libraries.\n"+
-   "• Main-page language refresh and additional translations.\n"+
-   "• More rounded menu buttons.";
+   "• Server imports use catalog.json Language for speech, Library for the destination, and Translation for the meaning title.\n"+
+   "• Import confirmation shows the destination library and lets you select another library or create one.\n"+
+   "• Existing target libraries still offer append, new library, or cancel.\n"+
+   "• Card View and Daily Practice show the translation label defined by the server catalog.\n"+
+   "• The built-in library is now named Default; legacy English-library data is migrated.\n\n"+
+   "Other recent improvements:\n"+
+   "• Rename/delete libraries and optionally practice only filtered cards.\n"+
+   "• Smoother horizontal card transitions.\n"+
+   "• More spacing between menu buttons and improved dialog action ordering.";
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Updates"))
    .setMessage(changes).setPositiveButton(tr("Close"),null).create();showStyled(d);
  }
@@ -477,7 +492,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   };
  }
  void updatePracticeFavorite(){if(practiceFavorite!=null&&cur!=null){practiceFavorite.setBackground(null);practiceFavorite.setBackgroundTintList(null);practiceFavorite.setPadding(0,0,0,0);practiceFavorite.setImageDrawable(starGlyph(favorite(cur)));}}
- void showDaily(){if(dailyIndex>=dailyCards.size()){dailyMode=false;AlertDialog done=new AlertDialog.Builder(this).setTitle(tr("Daily Practice Complete")).setMessage(tr("Reviewed")+": "+ratedToday.size()+"\n\n"+tr("Good")+": "+dailyGood+"\n"+tr("Hard")+": "+dailyHard+"\n\n"+tr("Hard cards are prioritized tomorrow.")).setPositiveButton(tr("Back to Library"),(d,w)->renderLibrary()).create();showStyled(done);return;}cur=dailyCards.get(dailyIndex);updatePracticeFavorite();practiceProgress.setText(tr("Daily Practice")+"  "+(dailyIndex+1)+" / "+dailyCards.size());phrase.setText(cur.p);enMeaning.setText(blank(cur.en));faMeaning.setText(blank(visibleNative(cur)));applyNativeMeaningUi();if(nativeMeaningLabel!=null)nativeMeaningLabel.setVisibility(visibleNative(cur).trim().isEmpty()?View.GONE:View.VISIBLE);if(faMeaning!=null)faMeaning.setVisibility(visibleNative(cur).trim().isEmpty()?View.GONE:View.VISIBLE);example.setText(blank(cur.e));answerBox.setVisibility(View.GONE);rating.setVisibility(View.GONE);show.setVisibility(View.VISIBLE);if(ratedToday.contains(cur.id)){show.setVisibility(View.GONE);answerBox.setVisibility(View.VISIBLE);}studyArea.setAlpha(0f);studyArea.setTranslationX(dp(40));studyArea.animate().alpha(1f).translationX(0).setDuration(180).setInterpolator(new DecelerateInterpolator()).start();studyArea.postDelayed(()->{if(dailyMode&&cur!=null)speakPhrase(cur);},220);}
+ void showDaily(){if(dailyIndex>=dailyCards.size()){dailyMode=false;AlertDialog done=new AlertDialog.Builder(this).setTitle(tr("Daily Practice Complete")).setMessage(tr("Reviewed")+": "+ratedToday.size()+"\n\n"+tr("Good")+": "+dailyGood+"\n"+tr("Hard")+": "+dailyHard+"\n\n"+tr("Hard cards are prioritized tomorrow.")).setPositiveButton(tr("Back to Library"),(d,w)->renderLibrary()).create();showStyled(done);return;}cur=dailyCards.get(dailyIndex);updatePracticeFavorite();practiceProgress.setText(tr("Daily Practice")+"  "+(dailyIndex+1)+" / "+dailyCards.size());phrase.setText(cur.p);enMeaning.setText(blank(cur.en));boolean hasEnglishMeaning=cur.en!=null&&!cur.en.trim().isEmpty();if(englishMeaningLabel!=null)englishMeaningLabel.setVisibility(hasEnglishMeaning?View.VISIBLE:View.GONE);enMeaning.setVisibility(hasEnglishMeaning?View.VISIBLE:View.GONE);faMeaning.setText(blank(visibleNative(cur)));applyNativeMeaningUi();if(nativeMeaningLabel!=null){nativeMeaningLabel.setText(meaningTitleForCard(cur));nativeMeaningLabel.setTextDirection(!cardTranslationLanguage(cur).isEmpty()&&translationIsRtl(cardTranslationLanguage(cur))?View.TEXT_DIRECTION_RTL:View.TEXT_DIRECTION_LTR);}if(nativeMeaningLabel!=null)nativeMeaningLabel.setVisibility(visibleNative(cur).trim().isEmpty()?View.GONE:View.VISIBLE);if(faMeaning!=null){faMeaning.setTextDirection(!cardTranslationLanguage(cur).isEmpty()&&translationIsRtl(cardTranslationLanguage(cur))?View.TEXT_DIRECTION_RTL:nativeRtl()?View.TEXT_DIRECTION_RTL:View.TEXT_DIRECTION_LTR);faMeaning.setGravity(!cardTranslationLanguage(cur).isEmpty()&&translationIsRtl(cardTranslationLanguage(cur))||cardTranslationLanguage(cur).isEmpty()&&nativeRtl()?Gravity.RIGHT:Gravity.LEFT);faMeaning.setVisibility(visibleNative(cur).trim().isEmpty()?View.GONE:View.VISIBLE);}example.setText(blank(cur.e));answerBox.setVisibility(View.GONE);rating.setVisibility(View.GONE);show.setVisibility(View.VISIBLE);if(ratedToday.contains(cur.id)){show.setVisibility(View.GONE);answerBox.setVisibility(View.VISIBLE);}studyArea.setAlpha(0f);studyArea.setTranslationX(dp(40));studyArea.animate().alpha(1f).translationX(0).setDuration(180).setInterpolator(new DecelerateInterpolator()).start();studyArea.postDelayed(()->{if(dailyMode&&cur!=null)speakPhrase(cur);},220);}
  void rate(boolean ok){if(cur==null||ratedToday.contains(cur.id))return;ratedToday.add(cur.id);int b=ok?Math.min(5,box(cur)+1):1;sp.edit().putInt(cur.id+"_box",b).putLong(cur.id+"_due",System.currentTimeMillis()+interval(b)).putInt(cur.id+"_result",ok?1:-1).apply();if(ok)dailyGood++;else{dailyHard++;sp.edit().putLong(cur.id+"_dailyHard",dayKey()).apply();}dailyIndex++;showDaily();}
 
  void installDailySwipe(){
@@ -515,7 +530,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   new Thread(()->{try{
    String content=fetchServerText(CATALOG_URL);JSONObject catalog=new JSONObject(content);JSONArray files=catalog.getJSONArray("files");
    ArrayList<JSONObject> entries=new ArrayList<>();ArrayList<String> labels=new ArrayList<>();
-   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);labels.add(f.optString("language","English")+"  •  "+f.optString("title",path)+"\n"+f.optString("description",""));}
+   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);labels.add(catalogField(f,"Language","language","English")+"  •  "+catalogField(f,"Library","library","Default")+"  •  "+catalogField(f,"Translation","translation","")+"\n"+f.optString("title",path)+"\n"+f.optString("description",""));}
    runOnUiThread(()->{progress.dismiss();if(entries.isEmpty()){new AlertDialog.Builder(this).setMessage("No CSV collections are published yet. Add entries to server-csv/catalog.json on GitHub.").setPositiveButton(tr("OK"),null).show();return;}
     showServerCollections(entries);});
   }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle(tr("Server import unavailable")).setMessage(ex.getMessage()).setPositiveButton(tr("OK"),null).show();});}}).start();
@@ -528,7 +543,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   AlertDialog dialog=new AlertDialog.Builder(this).setTitle(tr("Import from Server")).setView(scroll).setNegativeButton(tr("Cancel"),null).create();
   for(JSONObject item:entries){
    String path=item.optString("file");Button b=new Button(this);
-   b.setText(item.optString("language","English")+"\n"+item.optString("title",path)+"\n"+item.optString("description",""));
+   b.setText(catalogField(item,"Language","language","English")+"  •  "+catalogField(item,"Library","library","Default")+"\n"+catalogField(item,"Translation","translation","")+"  •  "+item.optString("title",path)+"\n"+item.optString("description",""));
    b.setAllCaps(false);b.setSingleLine(false);b.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
    android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
    bg.setColor(isDark()?Color.rgb(47,47,47):Color.rgb(241,244,249));bg.setCornerRadius(dp(14));
@@ -546,15 +561,29 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
    return bytes.toString("UTF-8");
   }finally{conn.disconnect();}
  }
+ String catalogField(JSONObject object,String preferred,String legacy,String fallback){String value=object.optString(preferred,"").trim();if(value.isEmpty())value=object.optString(legacy,"").trim();return value.isEmpty()?fallback:value;}
  void confirmServerImport(JSONObject file){
-  String language=file.optString("language","English");String path=file.optString("file");
-  AlertDialog dlg=new AlertDialog.Builder(this).setTitle(tr("Import ")+file.optString("title",path)).setMessage("Import into "+language+"? Existing cards with the same phrase in this language will be skipped.").setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Import"),(d,w)->downloadServerCsv(path,language)).create();showStyled(dlg);
+  String speechLanguage=catalogField(file,"Language","language","English");
+  String targetLibrary=catalogField(file,"Library","library","Default");
+  String translationLanguage=catalogField(file,"Translation","translation","");
+  String path=file.optString("file");
+  LinearLayout box=new LinearLayout(this);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(20),dp(8),dp(20),dp(4));
+  TextView info=new TextView(this);info.setText("Speaking language: "+speechLanguage+"\nTranslation: "+(translationLanguage.isEmpty()?"Use native language":translationLanguage)+"\nTarget library: "+targetLibrary);info.setTextSize(16);box.addView(info);
+  AlertDialog dlg=new AlertDialog.Builder(this).setTitle(tr("Import ")+file.optString("title",path)).setView(box).setNegativeButton(tr("Cancel"),null).setNeutralButton(tr("Change Library"),null).setPositiveButton(tr("Import"),null).create();
+  dlg.setOnShowListener(v->{styleClose(dlg);dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(x->{dlg.dismiss();chooseImportLibrary(targetLibrary,chosen->downloadServerCsv(path,chosen,speechLanguage,translationLanguage));});dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{dlg.dismiss();downloadServerCsv(path,targetLibrary,speechLanguage,translationLanguage);});});dlg.show();
  }
- void downloadServerCsv(String path,String language){
+ interface LibraryChoice{void accept(String library);}
+ void chooseImportLibrary(String current,LibraryChoice callback){
+  ArrayList<String> options=new ArrayList<>();options.addAll(decks);if(!options.contains(current))options.add(0,current);options.add(tr("Create new library…"));String[] values=options.toArray(new String[0]);
+  AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Choose import library")).setSingleChoiceItems(values,Math.max(0,options.indexOf(current)),null).setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Continue"),null).create();
+  d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int selectedIndex=d.getListView().getCheckedItemPosition();if(selectedIndex<0)selectedIndex=Math.max(0,options.indexOf(current));String selectedLibrary=values[selectedIndex];d.dismiss();if(selectedLibrary.equals(tr("Create new library…")))promptImportLibraryName(callback);else callback.accept(selectedLibrary);});});d.show();
+ }
+ void promptImportLibraryName(LibraryChoice callback){EditText input=new EditText(this);input.setSingleLine(true);input.setHint(tr("Library name"));AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Create new library")).setView(input).setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Create"),null).create();d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{String name=input.getText().toString().trim();if(name.isEmpty()){input.setError(tr("Enter a library name"));return;}if(decks.contains(name)){new AlertDialog.Builder(this).setTitle(tr("Library already exists")).setMessage(name).setPositiveButton(tr("OK"),null).show();return;}d.dismiss();callback.accept(name);});});d.show();}
+ void downloadServerCsv(String path,String targetLibrary,String speechLanguage,String translationLanguage){
   if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))return;
   final ProgressDialog progress=ProgressDialog.show(this,"Import from Server","Downloading CSV...",true,false);
   new Thread(()->{try{String csv=fetchServerText("https://raw.githubusercontent.com/omidrb/PhraseFlashCardsAndroid/main/server-csv/"+path);
-   runOnUiThread(()->{progress.dismiss();importServerRows(csv,language);});
+   runOnUiThread(()->{progress.dismiss();importServerRows(csv,targetLibrary,speechLanguage,translationLanguage);});
   }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle(tr("Download failed")).setMessage(ex.getMessage()).setPositiveButton(tr("OK"),null).show();});}}).start();
  }
 
@@ -569,16 +598,16 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   return true;
  }
  boolean headerMatchesNative(String header){String h=header.toLowerCase(Locale.ROOT);String n=nativeLanguage().toLowerCase(Locale.ROOT);return h.contains(n)||n.equals("persian")&&(h.contains("farsi")||h.contains("فارسی"))||h.contains("native")&&!hasExplicitTranslationLanguage(h);}
- void importServerRows(String csv,String language){
-  if(decks.contains(language)){askImportDestination(language,chosen->importServerRowsResolved(csv,chosen));}
-  else importServerRowsResolved(csv,language);
+ void importServerRows(String csv,String targetLibrary,String speechLanguage,String translationLanguage){
+  if(decks.contains(targetLibrary)){askImportDestination(targetLibrary,chosen->importServerRowsResolved(csv,chosen,speechLanguage,translationLanguage));}
+  else importServerRowsResolved(csv,targetLibrary,speechLanguage,translationLanguage);
  }
  interface ImportDestination{void accept(String library);}
- void askImportDestination(String language,ImportDestination callback){
+ void askImportDestination(String library,ImportDestination callback){
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Library already exists"))
-   .setMessage(tr("The library already exists, Do you want to append the cards to existing library or create a new library?"))
+   .setMessage("The target library '"+library+"' already exists. Add cards to it or create a new library?")
    .setNegativeButton(tr("Cancel"),null)
-   .setNeutralButton(tr("Add to the library"),(q,w)->callback.accept(language))
+   .setNeutralButton(tr("Add to the library"),(q,w)->callback.accept(library))
    .setPositiveButton(tr("New library"),(q,w)->promptNewImportLibrary(callback)).create();showStyled(d);
  }
  void promptNewImportLibrary(ImportDestination callback){
@@ -587,20 +616,23 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
    .setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Create"),null).create();
   d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(q->{
    String name=input.getText().toString().trim();
-   if(name.isEmpty()||decks.contains(name)){input.setError(tr("Library name already exists or is empty"));return;}
+   if(name.isEmpty()){input.setError(tr("Enter a library name"));return;}
+   if(decks.contains(name)){input.setError(tr("Library name already exists or is empty"));return;}
    decks.add(name);saveDecks();d.dismiss();callback.accept(name);
   });});d.show();
  }
- void importServerRowsResolved(String csv,String language){
+ void importServerRowsResolved(String csv,String library,String speechLanguage,String translationLanguage){
   try{
    ArrayList<ArrayList<String>> rows=new ArrayList<>();for(String line:csv.replace("\r\n","\n").split("\n"))if(!line.trim().isEmpty())rows.add(parseCsv(line));
    if(rows.isEmpty())throw new IOException("CSV is empty");
    ArrayList<String> header=rows.get(0);int phraseCol=-1,enCol=-1,nativeCol=-1,exampleCol=-1,usageCol=-1;
-   for(int i=0;i<header.size();i++){String h=header.get(i).trim().toLowerCase(Locale.ROOT).replace("_"," ");
+   for(int i=0;i<header.size();i++){String h=header.get(i).trim().toLowerCase(Locale.ROOT).replace("_"," ");String catalogTranslation=translationLanguage.trim().toLowerCase(Locale.ROOT);
+    boolean catalogTranslationColumn=!catalogTranslation.isEmpty()&&(h.equals("translation")||h.equals("translated meaning")||(h.equals("meaning")&&!catalogTranslation.equals("english"))||h.equals("meaning ("+catalogTranslation+")")||h.contains(catalogTranslation));
     if(h.equals("phrase")||h.equals("word")||h.equals("expression")||h.equals("text")||h.equals("term")||h.equals("sentence")||h.equals("phrase / word")||h.equals("phrase/word")||h.equals("english phrase")||h.equals("norwegian phrase")||h.equals("german phrase")||h.startsWith("phrase ")||h.endsWith(" phrase"))phraseCol=i;
     else if(h.contains("example"))exampleCol=i;
     else if(h.contains("usage"))usageCol=i;
-    else if(h.contains("persian")||h.contains("farsi")||h.contains("native")||h.contains("فارسی")||h.contains("norwegian")||h.contains("german")||h.contains("arabic")||h.contains("french")||h.contains("spanish")||h.contains("italian")||h.contains("urdu")||h.contains("hebrew")||h.contains("turkish")||h.contains("polish"))nativeCol=i;
+    else if(catalogTranslationColumn)nativeCol=i;
+    else if(h.contains("persian")||h.contains("farsi")||h.contains("native")||h.contains("فارسی")||h.contains("norwegian")||h.contains("german")||h.contains("arabic")||h.contains("french")||h.contains("spanish")||h.contains("italian")||h.contains("urdu")||h.contains("hebrew")||h.contains("turkish")||h.contains("polish")){if(translationLanguage.trim().isEmpty())nativeCol=i;}
     else if(h.contains("english")||h.contains("explanation")||h.equals("meaning"))enCol=i;
    }
    if(phraseCol<0){
@@ -608,20 +640,21 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
     // Default to the first column, and only skip the first row when it resembles a header.
     phraseCol=0;String first=header.get(0).trim().toLowerCase(Locale.ROOT);
     boolean looksHeader=first.matches(".*(phrase|word|expression|term|sentence|text|original|source).*" )||header.stream().anyMatch(x->x.toLowerCase(Locale.ROOT).matches(".*(translation|meaning|example|explanation|usage).*"));
-    if(!looksHeader){rows.add(0,new ArrayList<String>(Arrays.asList("Phrase","Meaning")));enCol=1;}
+    if(!looksHeader){rows.add(0,new ArrayList<String>(Arrays.asList("Phrase",translationLanguage.trim().isEmpty()?"Meaning":translationLanguage+" Meaning")));header=rows.get(0);if(!translationLanguage.trim().isEmpty()){nativeCol=1;enCol=-1;}else enCol=1;}
    }
-   if(!decks.contains(language)){decks.add(language);saveDecks();}
-   HashSet<String> known=new HashSet<>();for(Card c:cards)if(c.lang.equalsIgnoreCase(language))known.add(c.p.trim().toLowerCase(Locale.ROOT));
+   if(!decks.contains(library)){decks.add(library);saveDecks();}
+   HashSet<String> known=new HashSet<>();for(Card c:cards)if(c.lang.equalsIgnoreCase(library))known.add(c.p.trim().toLowerCase(Locale.ROOT));
    boolean mismatch=nativeCol>=0&&!headerMatchesNative(header.get(nativeCol));
+   boolean catalogTranslationMissing=!translationLanguage.trim().isEmpty()&&nativeCol<0;
    int added=0,skipped=0;
    for(int i=1;i<rows.size();i++){ArrayList<String> row=rows.get(i);String phraseValue=getCol(row,phraseCol).trim();if(phraseValue.isEmpty())continue;
     String key=phraseValue.toLowerCase(Locale.ROOT);if(!known.add(key)){skipped++;continue;}
     String english=getCol(row,enCol).trim(),nativeText=getCol(row,nativeCol).trim(),examples=getCol(row,exampleCol).trim();
     boolean badTranslation=nativeCol>=0&&!translationCompatible(header.get(nativeCol),nativeText);if(badTranslation)mismatch=true;
     if(usageCol>=0&&!getCol(row,usageCol).trim().isEmpty())english+=(english.isEmpty()?"":"\n")+"Usage: "+getCol(row,usageCol).trim();
-    String cardId="c"+System.currentTimeMillis()+"_srv_"+i;cards.add(new Card(cardId,language,phraseValue,english,nativeText,"",examples));if(nativeCol>=0)sp.edit().putString(cardId+"_translation_header",header.get(nativeCol)).apply();added++;
+    String cardId="c"+System.currentTimeMillis()+"_srv_"+i;cards.add(new Card(cardId,library,phraseValue,english,nativeText,"",examples));SharedPreferences.Editor meta=sp.edit().putString(cardId+"_speech_language",speechLanguage);if(!translationLanguage.trim().isEmpty())meta.putString(cardId+"_translation_language",translationLanguage.trim());if(nativeCol>=0)meta.putString(cardId+"_translation_header",header.get(nativeCol));meta.apply();added++;
    }
-   saveCustom();renderLibrary();new AlertDialog.Builder(this).setTitle(tr("Import complete")).setMessage(added+" new cards added to "+language+".\n"+skipped+" existing cards skipped."+(mismatch?"\nTranslation column does not match your native language ("+nativeLanguage()+"); translations were hidden.":"")).setPositiveButton(tr("OK"),null).show();
+   saveCustom();if(!decks.contains(library))decks.add(library);saveDecks();lang=library;sp.edit().putString("active_language",lang).apply();loadFilter();renderLibrary();new AlertDialog.Builder(this).setTitle(tr("Import complete")).setMessage(added+" new cards imported to library "+library+".\nSpeaking language: "+speechLanguage+(translationLanguage.trim().isEmpty()?"":"\nTranslation title: "+meaningTitleForLanguage(translationLanguage))+"\n"+skipped+" existing cards skipped."+(catalogTranslationMissing?"\nWarning: no CSV translation column matching catalog Translation '"+translationLanguage+"' was found; imported translation values are blank.":mismatch&&translationLanguage.trim().isEmpty()?"\nTranslation column may not match your native language.":"")).setPositiveButton(tr("OK"),null).show();
   }catch(Exception ex){new AlertDialog.Builder(this).setTitle(tr("CSV import error")).setMessage(ex.getMessage()).setPositiveButton(tr("OK"),null).show();}
  }
 

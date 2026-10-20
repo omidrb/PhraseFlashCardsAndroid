@@ -27,9 +27,9 @@ jobs:
          exit 1
        fi
        echo "AAB exists: $(ls -lh "$AAB")"
-       echo "Expected app versionCode: 60"
+       echo "Expected app versionCode: 61"
        echo "Expected applicationId: com.zopelab.zopeflashcards"
-       grep -qE 'versionCode[[:space:]]+60([;[:space:]]|$)' app/build.gradle || { echo "ERROR: Gradle versionCode is not 60"; exit 1; }
+       grep -qE 'versionCode[[:space:]]+61([;[:space:]]|$)' app/build.gradle || { echo "ERROR: Gradle versionCode is not 61"; exit 1; }
        grep -q 'applicationId "com.zopelab.zopeflashcards"' app/build.gradle || { echo "ERROR: Unexpected applicationId"; exit 1; }
        echo "AAB presence and Gradle configuration verified. Play Console will validate the uploaded bundle."
    - name: Build debug APK for phone testing
@@ -48,12 +48,12 @@ jobs:
    - name: Upload debug APK
      uses: actions/upload-artifact@v4
      with:
-      name: ZopeFlashCards-v11.1-code60-Test-APK
+      name: ZopeFlashCards-v11.2-code61-Test-APK
       path: app/build/outputs/apk/debug/app-debug.apk
       if-no-files-found: error
    - name: Upload Google Play bundle
      uses: actions/upload-artifact@v4
      with:
-      name: ZopeFlashCards-v11.1-code60-GooglePlay-AAB
+      name: ZopeFlashCards-v11.2-code61-GooglePlay-AAB
       path: app/build/outputs/bundle/release/app-release.aab
       if-no-files-found: error

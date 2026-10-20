@@ -1,12 +1,12 @@
-# Zope Flash Cards v10.1
+# Zope Flash Cards v11.2
 
 Zope Flash Cards is an Android language-learning flashcard application for creating, importing, reviewing, and practicing vocabulary and phrases. It combines multilingual card management, Daily Practice, Leitner-style spaced repetition, text-to-speech, favorites, filtering, notifications, CSV exchange, and full backup/restore.
 
 ## Release information
 
 - App name: **Zope Flash Cards**
-- Version: **10.0**
-- Version code: **47**
+- Version: **11.2**
+- Version code: **61**
 - Android package / application ID: **`com.zopelab.zopeflashcards`**
 - Minimum SDK: **24**
 - Compile SDK: **36**
@@ -115,7 +115,7 @@ Workflow configuration:
 - Gradle: 8.9
 - Build command: `gradle clean bundleRelease --stacktrace`
 - Output: `app/build/outputs/bundle/release/app-release.aab`
-- GitHub artifact: `ZopeFlashCards-v10.1-GooglePlay-AAB`
+- GitHub artifact: `ZopeFlashCards-v11.2-code61-GooglePlay-AAB`
 
 The workflow also verifies that the source package and Gradle application ID are consistently `com.zopelab.zopeflashcards` and removes stale legacy `com.phrasecards` Java sources before building.
 
@@ -164,3 +164,36 @@ This is a partial, uncompiled update, versionCode 51. Server import dialog uses 
 - About includes an Updates button with the current release highlights.
 
 **Validation:** Source prepared; Android APK/AAB compilation and device testing not performed here.
+
+
+## v11.2 (versionCode 61) — Server catalog metadata
+
+- Server CSV imports read `Language`, `Library`, and `Translation` from each `server-csv/catalog.json` entry (case-sensitive keys preferred; lowercase legacy keys remain supported).
+- Imported cards are grouped under the catalog `Library`, while text-to-speech uses catalog `Language`.
+- Card details and Daily Practice display the meaning title for the catalog `Translation` language, and show that imported translation independently of the app's native-language selection.
+- Before download, the import confirmation shows the speaking language, translation language, and target library. The target library can be changed or a new one created. Existing target libraries still trigger an append/new/cancel choice.
+- The built-in library is now named `Default`. Existing legacy English-library cards/deck preferences are migrated once to `Default`; their speech defaults to English.
+
+**Validation:** Source package only; Android build and runtime tests are not yet verified.
+
+
+### Server catalog metadata (v11.2)
+
+Each object in `server-csv/catalog.json` should include the CSV `file`, `Language`, `Library`, and `Translation` fields. For example:
+
+```json
+{
+  "files": [
+    {
+      "file": "english_german.csv",
+      "title": "English phrases with German translations",
+      "Language": "English",
+      "Library": "English-German",
+      "Translation": "German",
+      "description": "Common phrases with examples"
+    }
+  ]
+}
+```
+
+`Language` controls text-to-speech, `Library` is the destination library, and `Translation` controls the meaning title and the expected translation column. The app accepts lowercase `language`, `library`, and `translation` keys for compatibility. Before download, the user can confirm the target library, choose another existing library, or create a new one. If the selected library already exists, the app asks whether to append, create a new library, or cancel. The built-in library is named **Default**.
