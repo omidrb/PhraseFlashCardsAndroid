@@ -1,11 +1,11 @@
-# Zope Flash Cards v11.2
+# Zope Flash Cards v11.3
 
 Zope Flash Cards is an Android language-learning flashcard application for creating, importing, reviewing, and practicing vocabulary and phrases. It combines multilingual card management, Daily Practice, Leitner-style spaced repetition, text-to-speech, favorites, filtering, notifications, CSV exchange, and full backup/restore.
 
 ## Release information
 
 - App name: **Zope Flash Cards**
-- Version: **11.2**
+- Version: **11.3**
 - Version code: **61**
 - Android package / application ID: **`com.zopelab.zopeflashcards`**
 - Minimum SDK: **24**
@@ -115,7 +115,7 @@ Workflow configuration:
 - Gradle: 8.9
 - Build command: `gradle clean bundleRelease --stacktrace`
 - Output: `app/build/outputs/bundle/release/app-release.aab`
-- GitHub artifact: `ZopeFlashCards-v11.2-code61-GooglePlay-AAB`
+- GitHub artifact: `ZopeFlashCards-v11.3-code62-GooglePlay-AAB`
 
 The workflow also verifies that the source package and Gradle application ID are consistently `com.zopelab.zopeflashcards` and removes stale legacy `com.phrasecards` Java sources before building.
 
@@ -197,3 +197,12 @@ Each object in `server-csv/catalog.json` should include the CSV `file`, `Languag
 ```
 
 `Language` controls text-to-speech, `Library` is the destination library, and `Translation` controls the meaning title and the expected translation column. The app accepts lowercase `language`, `library`, and `translation` keys for compatibility. Before download, the user can confirm the target library, choose another existing library, or create a new one. If the selected library already exists, the app asks whether to append, create a new library, or cancel. The built-in library is named **Default**.
+
+
+## v11.3 (versionCode 62) — Startup import and library navigation
+
+- On first launch, checks the published server catalog. If libraries are available, asks whether to open the server import list or skip importing. A successful catalog check is remembered; temporary server failures can be retried on a later launch.
+- Server collection rows show Library, Language, and Title on separate lines.
+- Main Language moved from the main menu into Settings.
+- Switch Library now uses radio selection without opening immediately. The Open button applies the selected library; Close, Rename, and Delete remain available.
+- Android build artifacts: `ZopeFlashCards-v11.3-code62-Test-APK` and `ZopeFlashCards-v11.3-code62-GooglePlay-AAB`.

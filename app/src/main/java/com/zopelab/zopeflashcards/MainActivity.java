@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity{
  ImageButton activeSpeaker=null;android.view.animation.Animation speakerAnimation;
  static final int EXPORT_CSV=401,IMPORT_CSV=402,EXPORT_BACKUP=403,IMPORT_BACKUP=404; TextToSpeech tts;boolean ttsReady=false;
 
- public void onCreate(Bundle b){sp=getSharedPreferences("zope_flashcards_v81",MODE_PRIVATE);applyTheme();super.onCreate(b);setContentView(R.layout.activity_main);bind();title.setText("Zope Flash Cards v"+appVersion());cleanDatabaseOnce();loadSeed();loadCustom();migrateLegacyDefaultLibrary();loadDecks();lang=sp.getString("active_language","Default");if(!decks.contains(lang))lang="Default";loadFilter();dark=isDark();styleTheme();applyNativeMeaningUi();localizeMainUi();findViewById(R.id.mainBottomBar).setBackgroundColor(Color.TRANSPARENT);styleMainButton(add);styleMainButton(daily);wire();installDailySwipe();enableButtonHaptics();initTts();renderLibrary();NotificationScheduler.ensureScheduled(this);handleNotificationIntent(getIntent());splash=findViewById(R.id.splash);splash.postDelayed(()->splash.setVisibility(View.GONE),550);if(!sp.getBoolean("native_language_selected",false))new Handler(Looper.getMainLooper()).postDelayed(()->showNativeLanguageDialog(true),650);}
+ public void onCreate(Bundle b){sp=getSharedPreferences("zope_flashcards_v81",MODE_PRIVATE);applyTheme();super.onCreate(b);setContentView(R.layout.activity_main);bind();title.setText("Zope Flash Cards v"+appVersion());cleanDatabaseOnce();loadSeed();loadCustom();migrateLegacyDefaultLibrary();loadDecks();lang=sp.getString("active_language","Default");if(!decks.contains(lang))lang="Default";loadFilter();dark=isDark();styleTheme();applyNativeMeaningUi();localizeMainUi();findViewById(R.id.mainBottomBar).setBackgroundColor(Color.TRANSPARENT);styleMainButton(add);styleMainButton(daily);wire();installDailySwipe();enableButtonHaptics();initTts();renderLibrary();NotificationScheduler.ensureScheduled(this);handleNotificationIntent(getIntent());splash=findViewById(R.id.splash);splash.postDelayed(()->splash.setVisibility(View.GONE),550);if(!sp.getBoolean("native_language_selected",false))new Handler(Looper.getMainLooper()).postDelayed(()->showNativeLanguageDialog(true),650);else scheduleStartupServerCheck();}
  void applyTheme(){String t=sp.getString("theme","system");int m=t.equals("dark")?AppCompatDelegate.MODE_NIGHT_YES:t.equals("light")?AppCompatDelegate.MODE_NIGHT_NO:AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;if(AppCompatDelegate.getDefaultNightMode()!=m)AppCompatDelegate.setDefaultNightMode(m);}
  boolean isDark(){return (getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;}
  void bind(){libraryView=findViewById(R.id.libraryView);practiceView=findViewById(R.id.practiceView);answerBox=findViewById(R.id.answerBox);rating=findViewById(R.id.rating);studyArea=findViewById(R.id.studyArea);selectionBar=findViewById(R.id.selectionBar);cardGrid=findViewById(R.id.cardGrid);title=findViewById(R.id.title);currentLanguage=findViewById(R.id.currentLanguage);cardCount=findViewById(R.id.cardCount);stats=findViewById(R.id.stats);goodStats=findViewById(R.id.goodStats);hardStats=findViewById(R.id.hardStats);selectedCount=findViewById(R.id.selectedCount);practiceProgress=findViewById(R.id.practiceProgress);phrase=findViewById(R.id.phrase);enMeaning=findViewById(R.id.meaningEnglish);englishMeaningLabel=findViewById(R.id.meaningEnglishLabel);faMeaning=findViewById(R.id.meaningPersian);nativeMeaningLabel=findViewById(R.id.nativeMeaningLabel);example=findViewById(R.id.example);search=findViewById(R.id.search);filterButton=findViewById(R.id.filterButton);goodBar=findViewById(R.id.goodProgress);hardBar=findViewById(R.id.hardProgress);unseenBar=findViewById(R.id.unseenProgress);menuButton=findViewById(R.id.menuButton);daily=findViewById(R.id.daily);add=findViewById(R.id.add);show=findViewById(R.id.show);hard=findViewById(R.id.hard);good=findViewById(R.id.good);backLibrary=findViewById(R.id.backLibrary);deleteSelected=findViewById(R.id.deleteSelected);selectAll=findViewById(R.id.selectAll);moveSelected=findViewById(R.id.moveSelected);cancelSelection=findViewById(R.id.cancelSelection);practiceListen=findViewById(R.id.practiceListen);practiceFavorite=findViewById(R.id.practiceFavorite);drawerOverlay=findViewById(R.id.drawerOverlay);drawerPanel=findViewById(R.id.drawerPanel);drawerLanguage=findViewById(R.id.drawerLanguage);drawerAddLanguage=findViewById(R.id.drawerAddLanguage);drawerMainLanguage=findViewById(R.id.drawerMainLanguage);drawerImport=findViewById(R.id.drawerImport);drawerExport=findViewById(R.id.drawerExport);drawerReset=findViewById(R.id.drawerReset);drawerMode=findViewById(R.id.drawerMode);drawerVoice=findViewById(R.id.drawerVoice);drawerNotification=findViewById(R.id.drawerNotification);drawerBackupRestore=findViewById(R.id.drawerBackupRestore);drawerPrivacy=findViewById(R.id.drawerPrivacy);drawerAbout=findViewById(R.id.drawerAbout);drawerClose=findViewById(R.id.drawerClose);drawerSettings=findViewById(R.id.drawerSettings);}
@@ -164,7 +164,7 @@ TRANSLATIONS.put("Polish",new String[]{"Menu","Dodaj kartę","Codzienna nauka","
   if(goodStats!=null&&hardStats!=null&&stats!=null)updateStats();
   if(selectedCount!=null)selectedCount.setText(selected.size()+" "+tr("selected"));if(faMeaning!=null){faMeaning.setTextDirection(nativeRtl()?View.TEXT_DIRECTION_RTL:View.TEXT_DIRECTION_LTR);faMeaning.setGravity(nativeRtl()?Gravity.RIGHT:Gravity.LEFT);}}
  String[] sortedNativeLanguages(){String[] result=NATIVE_LANGUAGES.clone();Arrays.sort(result,String.CASE_INSENSITIVE_ORDER);return result;}
- void showNativeLanguageDialog(boolean required){int checked=Arrays.asList(sortedNativeLanguages()).indexOf(nativeLanguage());if(checked<0)checked=0;final int initial=checked;AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Select your native language")).setSingleChoiceItems(sortedNativeLanguages(),checked,null).setPositiveButton(tr("Save"),null).create();d.setCancelable(!required);d.setCanceledOnTouchOutside(!required);d.setOnShowListener(v->{d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int pos=d.getListView().getCheckedItemPosition();if(pos<0)pos=initial;String n=sortedNativeLanguages()[pos];if(n.equals("Other")){EditText input=new EditText(this);input.setHint(tr("Native language name"));input.setText(sp.getString("native_language_other",""));AlertDialog od=new AlertDialog.Builder(this).setTitle(tr("Other native language")).setView(input).setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Save"),(q,w)->{String custom=input.getText().toString().trim();if(custom.isEmpty())custom="Native";sp.edit().putString("native_language","Other").putString("native_language_other",custom).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();localizeMainUi();renderLibrary();d.dismiss();}).create();showStyled(od);}else{sp.edit().putString("native_language",n).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();localizeMainUi();renderLibrary();d.dismiss();}});styleClose(d);});d.show();}
+ void showNativeLanguageDialog(boolean required){int checked=Arrays.asList(sortedNativeLanguages()).indexOf(nativeLanguage());if(checked<0)checked=0;final int initial=checked;AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Select your native language")).setSingleChoiceItems(sortedNativeLanguages(),checked,null).setPositiveButton(tr("Save"),null).create();d.setCancelable(!required);d.setCanceledOnTouchOutside(!required);d.setOnShowListener(v->{d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x->{int pos=d.getListView().getCheckedItemPosition();if(pos<0)pos=initial;String n=sortedNativeLanguages()[pos];if(n.equals("Other")){EditText input=new EditText(this);input.setHint(tr("Native language name"));input.setText(sp.getString("native_language_other",""));AlertDialog od=new AlertDialog.Builder(this).setTitle(tr("Other native language")).setView(input).setNegativeButton(tr("Cancel"),null).setPositiveButton(tr("Save"),(q,w)->{String custom=input.getText().toString().trim();if(custom.isEmpty())custom="Native";sp.edit().putString("native_language","Other").putString("native_language_other",custom).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();localizeMainUi();renderLibrary();d.dismiss();scheduleStartupServerCheck();}).create();showStyled(od);}else{sp.edit().putString("native_language",n).putBoolean("native_language_selected",true).apply();applyNativeMeaningUi();localizeMainUi();renderLibrary();d.dismiss();scheduleStartupServerCheck();}});styleClose(d);});d.show();}
  boolean looksNativeText(String s){if(s==null||s.trim().isEmpty())return false;if(nativeRtl()){for(char c:s.toCharArray())if(c>=0x0590&&c<=0x08FF)return true;}return false;}
  boolean hasPersian(String s){for(char c:s.toCharArray())if(c>=0x0600&&c<=0x06FF)return true;return false;}
  void styleSpeakerButton(ImageButton b){if(b==null)return;b.setBackgroundTintList(null);b.setColorFilter(Color.WHITE);GradientDrawable g=new GradientDrawable();g.setColor(Color.rgb(118,168,123));g.setCornerRadius(dp(22));b.setBackground(g);b.setPadding(dp(10),dp(10),dp(10),dp(10));}
@@ -350,9 +350,9 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
 
  void showSettingsMenu(){
   settingsDrawerOpen=true;
-  Button[] top={drawerLanguage,drawerAddLanguage,drawerMainLanguage,drawerImport,drawerExport,drawerNotification,drawerPrivacy,drawerAbout,drawerSettings};
+  Button[] top={drawerLanguage,drawerAddLanguage,drawerImport,drawerExport,drawerNotification,drawerPrivacy,drawerAbout,drawerSettings,drawerMainLanguage};
   for(Button button:top)if(button!=null)button.setVisibility(View.GONE);
-  Button[] sub={drawerBackupRestore,drawerReset,drawerMode,drawerVoice};
+  Button[] sub={drawerMainLanguage,drawerBackupRestore,drawerReset,drawerMode,drawerVoice};
   for(Button button:sub)if(button!=null)button.setVisibility(View.VISIBLE);
   if(drawerSettings!=null)drawerSettings.setVisibility(View.VISIBLE);
   drawerSettings.setText("← "+tr("Menu"));
@@ -388,9 +388,9 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
  }
  void showMenu(){
   settingsDrawerOpen=false;
-  Button[] main={drawerLanguage,drawerAddLanguage,drawerMainLanguage,drawerImport,drawerExport,drawerNotification,drawerPrivacy,drawerAbout,drawerSettings};
+  Button[] main={drawerLanguage,drawerAddLanguage,drawerImport,drawerExport,drawerNotification,drawerPrivacy,drawerAbout,drawerSettings,drawerMainLanguage};
   for(Button button:main)if(button!=null)button.setVisibility(View.VISIBLE);
-  Button[] sub={drawerBackupRestore,drawerReset,drawerMode,drawerVoice};
+  Button[] sub={drawerMainLanguage,drawerBackupRestore,drawerReset,drawerMode,drawerVoice};
   for(Button button:sub)if(button!=null)button.setVisibility(View.GONE);
   if(practiceDrawerButton!=null)practiceDrawerButton.setVisibility(View.GONE);
   drawerSettings.setText(tr("Settings"));drawerSettings.setOnClickListener(v->showSettingsMenu());
@@ -418,17 +418,23 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Filter")+" — "+lang).setView(boxv).setNegativeButton(tr("Clear"),null).setPositiveButton(tr("Apply"),null).create();d.setOnShowListener(v->{styleClose(d);d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(q->{filterFavorites=false;filterTag="";filterResult="";filterBox=0;saveFilter();d.dismiss();renderLibrary();});d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(q->{filterFavorites=fav.isChecked();filterTag=tags.getSelectedItemPosition()==0?"":String.valueOf(tags.getSelectedItem());filterResult=rs.getSelectedItemPosition()==1?"Good":rs.getSelectedItemPosition()==2?"Hard":"";filterBox=bs.getSelectedItemPosition();saveFilter();d.dismiss();renderLibrary();});});d.show();}
  void chooseMode(){String[]m={"Dark","Light","System default"};String curMode=sp.getString("theme","system");int checked=curMode.equals("dark")?0:curMode.equals("light")?1:2;AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Mode")).setSingleChoiceItems(m,checked,(x,w)->{setTheme(w==0?"dark":w==1?"light":"system");x.dismiss();}).setNegativeButton(tr("Close"),null).create();showStyled(d);}
   void chooseLanguage(){
-  final String[] names=decks.toArray(new String[0]);final int[] choice={Math.max(0,decks.indexOf(lang))};
-  AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Switch Library"))
-   .setSingleChoiceItems(names,choice[0],(dialog,index)->{choice[0]=index;})
-   .setNegativeButton(tr("Close"),null)
-   .setNeutralButton(tr("Delete"),null)
-   .setPositiveButton(tr("Rename"),null).create();
-  d.setOnShowListener(v->{styleClose(d);
-   d.getListView().setOnItemClickListener((parent,view,pos,id)->{choice[0]=pos;lang=names[pos];sp.edit().putString("active_language",lang).apply();loadFilter();selected.clear();search.setText("");d.dismiss();applyNativeMeaningUi();localizeMainUi();renderLibrary();});
-   d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v2->{d.dismiss();renameLibrary(names[choice[0]]);});
-   d.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v2->{d.dismiss();deleteLibrary(names[choice[0]]);});
-  });d.show();
+  final ArrayList<String> names=new ArrayList<>(decks);if(names.isEmpty())names.add("Default");
+  final int[] choice={Math.max(0,names.indexOf(lang))};
+  LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(18),dp(8),dp(18),dp(10));
+  TextView hint=new TextView(this);hint.setText(tr("Select a library, then tap Open"));hint.setTextSize(14);hint.setPadding(dp(4),dp(4),dp(4),dp(8));root.addView(hint);
+  ScrollView scroll=new ScrollView(this);RadioGroup group=new RadioGroup(this);group.setOrientation(RadioGroup.VERTICAL);
+  for(int i=0;i<names.size();i++){RadioButton rb=new RadioButton(this);rb.setText(names.get(i));rb.setTextSize(16);rb.setPadding(dp(8),dp(8),dp(8),dp(8));rb.setId(View.generateViewId());rb.setTag(i);group.addView(rb,new RadioGroup.LayoutParams(-1,-2));if(i==choice[0])rb.setChecked(true);}
+  group.setOnCheckedChangeListener((g,id)->{View selectedView=g.findViewById(id);if(selectedView!=null&&selectedView.getTag() instanceof Integer)choice[0]=(Integer)selectedView.getTag();});scroll.addView(group);root.addView(scroll,new LinearLayout.LayoutParams(-1,Math.min(dp(330),dp(62)*names.size()+dp(12))));
+  LinearLayout actions=new LinearLayout(this);actions.setOrientation(LinearLayout.HORIZONTAL);actions.setGravity(Gravity.CENTER);actions.setPadding(0,dp(10),0,0);
+  Button close=new Button(this),open=new Button(this),rename=new Button(this),delete=new Button(this);
+  close.setText(tr("Close"));open.setText(tr("Open"));rename.setText(tr("Rename"));delete.setText(tr("Delete"));
+  Button[] buttons={close,open,rename,delete};for(Button b:buttons){b.setAllCaps(false);b.setTextSize(12);b.setTextColor(Color.WHITE);GradientDrawable shape=new GradientDrawable();shape.setColor(Color.rgb(125,155,199));shape.setCornerRadius(dp(10));b.setBackground(shape);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,dp(46),1);lp.setMargins(dp(2),0,dp(2),0);actions.addView(b,lp);}root.addView(actions);
+  AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Switch Library")).setView(root).create();
+  close.setOnClickListener(v->d.dismiss());
+  open.setOnClickListener(v->{String selectedName=names.get(Math.max(0,Math.min(choice[0],names.size()-1)));d.dismiss();lang=selectedName;sp.edit().putString("active_language",lang).apply();loadFilter();selected.clear();search.setText("");applyNativeMeaningUi();localizeMainUi();renderLibrary();});
+  rename.setOnClickListener(v->{String selectedName=names.get(Math.max(0,Math.min(choice[0],names.size()-1)));d.dismiss();renameLibrary(selectedName);});
+  delete.setOnClickListener(v->{String selectedName=names.get(Math.max(0,Math.min(choice[0],names.size()-1)));d.dismiss();deleteLibrary(selectedName);});
+  showStyled(d);
  }
  void renameLibrary(String old){
   if(old.equals("Default")){Toast.makeText(this,tr("Default library cannot be renamed"),Toast.LENGTH_LONG).show();return;}
@@ -530,12 +536,22 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   new Thread(()->{try{
    String content=fetchServerText(CATALOG_URL);JSONObject catalog=new JSONObject(content);JSONArray files=catalog.getJSONArray("files");
    ArrayList<JSONObject> entries=new ArrayList<>();ArrayList<String> labels=new ArrayList<>();
-   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);labels.add(catalogField(f,"Language","language","English")+"  •  "+catalogField(f,"Library","library","Default")+"  •  "+catalogField(f,"Translation","translation","")+"\n"+f.optString("title",path)+"\n"+f.optString("description",""));}
+   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);labels.add("Library: "+catalogField(f,"Library","library","Default")+"\nLanguage: "+catalogField(f,"Language","language","English")+"\nTitle: "+f.optString("title",path));}
    runOnUiThread(()->{progress.dismiss();if(entries.isEmpty()){new AlertDialog.Builder(this).setMessage("No CSV collections are published yet. Add entries to server-csv/catalog.json on GitHub.").setPositiveButton(tr("OK"),null).show();return;}
     showServerCollections(entries);});
   }catch(Exception ex){runOnUiThread(()->{progress.dismiss();new AlertDialog.Builder(this).setTitle(tr("Server import unavailable")).setMessage(ex.getMessage()).setPositiveButton(tr("OK"),null).show();});}}).start();
  }
 
+ void scheduleStartupServerCheck(){if(!sp.getBoolean("startup_server_import_checked_v113",false))new Handler(Looper.getMainLooper()).postDelayed(this::checkServerCatalogOnFirstLaunch,800);}
+ void checkServerCatalogOnFirstLaunch(){
+  new Thread(()->{try{
+   String content=fetchServerText(CATALOG_URL);JSONObject catalog=new JSONObject(content);JSONArray files=catalog.getJSONArray("files");ArrayList<JSONObject> entries=new ArrayList<>();
+   for(int i=0;i<files.length();i++){JSONObject f=files.getJSONObject(i);String path=f.optString("file");if(!path.matches("[A-Za-z0-9_./-]+\\.csv")||path.contains("..")||path.startsWith("/"))continue;entries.add(f);}
+   sp.edit().putBoolean("startup_server_import_checked_v113",true).apply();
+   runOnUiThread(()->{if(entries.isEmpty())return;AlertDialog d=new AlertDialog.Builder(this).setTitle(tr("Import from Server")).setMessage(tr("Available libraries were found on the server. Would you like to import a library now?")).setNegativeButton(tr("Skip importing"),(dialog,which)->{}).setPositiveButton(tr("Import libraries"),(dialog,which)->showServerCollections(entries)).create();showStyled(d);});
+  }catch(Exception ignored){/* Retry on a later launch if the server is temporarily unavailable. */}}
+  ).start();
+ }
  void showServerCollections(ArrayList<JSONObject> entries){
   android.widget.ScrollView scroll=new android.widget.ScrollView(this);
   android.widget.LinearLayout list=new android.widget.LinearLayout(this);
@@ -543,7 +559,7 @@ TextView heart=new TextView(this);heart.setText(favorite(c)?"★":"");heart.setT
   AlertDialog dialog=new AlertDialog.Builder(this).setTitle(tr("Import from Server")).setView(scroll).setNegativeButton(tr("Cancel"),null).create();
   for(JSONObject item:entries){
    String path=item.optString("file");Button b=new Button(this);
-   b.setText(catalogField(item,"Language","language","English")+"  •  "+catalogField(item,"Library","library","Default")+"\n"+catalogField(item,"Translation","translation","")+"  •  "+item.optString("title",path)+"\n"+item.optString("description",""));
+   b.setText("Library: "+catalogField(item,"Library","library","Default")+"\nLanguage: "+catalogField(item,"Language","language","English")+"\nTitle: "+item.optString("title",path));
    b.setAllCaps(false);b.setSingleLine(false);b.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
    android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
    bg.setColor(isDark()?Color.rgb(47,47,47):Color.rgb(241,244,249));bg.setCornerRadius(dp(14));
