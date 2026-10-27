@@ -33,5 +33,13 @@
       "description": "",
       "Library":"EN-GM"
     }
+     {
+      "file": "Spanish_English_200.csv",
+      "title": "Learning 200 Spanish phrases with English translation",
+      "language": "Spanish",
+      "Translation":"English",
+      "description": "",
+      "Library":"SP-EN"
+    }
   ]
 }
