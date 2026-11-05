@@ -9,6 +9,14 @@
       "description": "",
       "Library":"EN-PR"
     },
+     {
+      "file": "Norwegian-English.csv",
+      "title": "Learning 200 Norsk phrases with English translation",
+      "language": "Norwagian",
+      "Translation":"English",
+      "description": "",
+      "Library":"NO-EN"
+    },
     {
       "file": "Norwegian_300.csv",
       "title": "Learning 300 Norwegian phrases with Persian translation",
